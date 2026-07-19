@@ -102,7 +102,7 @@ public class AreaBreakAbilityHandler implements AbilityHandler {
         }
 
         List<ItemStack> drops = event.isDropItems()
-                ? target.getDrops(tool, player).stream().map(ItemStack::clone).toList()
+                ? target.getDrops(tool, player).stream().map(item -> item.clone()).toList()
                 : List.of();
 
         target.setType(Material.AIR, false);

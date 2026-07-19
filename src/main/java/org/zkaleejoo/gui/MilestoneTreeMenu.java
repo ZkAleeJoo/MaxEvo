@@ -41,7 +41,7 @@ public class MilestoneTreeMenu {
         int size = config.getGuiInventorySize(BASE_PATH + ".size", 54);
 
         List<EvolutionMilestone> milestones = evolutionManager.getMilestones(session.getToolType()).stream()
-                .sorted(Comparator.comparingInt(EvolutionMilestone::blocksRequired))
+                .sorted(Comparator.comparingInt(m -> m.blocksRequired()))
                 .toList();
 
         int totalPages = Math.max(1, (int) Math.ceil(milestones.size() / (double) Math.max(1, milestoneSlots.size())));
@@ -247,7 +247,7 @@ public class MilestoneTreeMenu {
     private String resolveNextReward(Material toolType, int usage) {
         EvolutionMilestone targetMilestone = evolutionManager.getMilestones(toolType).stream()
                 .filter(milestone -> usage < milestone.blocksRequired())
-                .min(Comparator.comparingInt(EvolutionMilestone::blocksRequired))
+                .min(Comparator.comparingInt(m -> m.blocksRequired()))
                 .orElse(null);
         if (targetMilestone == null) {
             return "-";

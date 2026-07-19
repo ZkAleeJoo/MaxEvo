@@ -47,7 +47,7 @@ final class MilestoneConfigParser {
             parsed.add(new EvolutionMilestone(blocks, enchantment, level, normalizeAbilityIds(unlockAbilities)));
         }
 
-        parsed.sort(Comparator.comparingInt(EvolutionMilestone::blocksRequired));
+        parsed.sort(Comparator.comparingInt(m -> m.blocksRequired()));
         return parsed;
     }
 

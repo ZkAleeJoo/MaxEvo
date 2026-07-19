@@ -137,7 +137,7 @@ public class TestToolSubCommand implements SubCommand {
         if (args.length == 1) {
             String input = args[0].toLowerCase(Locale.ROOT);
             return getTrackedToolMaterials(evolutionManager).stream()
-                    .map(Material::name)
+                    .map(mat -> mat.name())
                     .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(input))
                     .toList();
         }
@@ -147,8 +147,8 @@ public class TestToolSubCommand implements SubCommand {
             List<String> completions = new ArrayList<>();
             completions.add("all");
             completions.addAll(evolutionManager.getSpecialAbilities().values().stream()
-                    .filter(SpecialAbilityConfig::enabled)
-                    .map(SpecialAbilityConfig::id)
+                    .filter(config -> config != null && config.enabled())
+                    .map(config -> config.id())
                     .sorted()
                     .toList());
             return completions.stream().filter(option -> option.startsWith(input)).toList();
@@ -236,8 +236,8 @@ public class TestToolSubCommand implements SubCommand {
 
         if ("all".equalsIgnoreCase(abilityArg)) {
             return evolutionManager.getSpecialAbilities(material).values().stream()
-                    .filter(SpecialAbilityConfig::enabled)
-                    .map(SpecialAbilityConfig::id)
+                    .filter(config -> config != null && config.enabled())
+                    .map(config -> config.id())
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
 

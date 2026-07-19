@@ -49,7 +49,10 @@ public class BlockBreakAbilityContext {
             return;
         }
         Block block = event.getBlock();
-        drops = block.getDrops(tool, player).stream().map(ItemStack::clone).toList();
+        drops = block.getDrops(tool, player).stream()
+                .filter(item -> item != null)
+                .map(item -> item.clone())
+                .toList();
     }
 
     public List<ItemStack> getDrops() {

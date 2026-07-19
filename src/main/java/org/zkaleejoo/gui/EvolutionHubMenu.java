@@ -67,7 +67,7 @@ public class EvolutionHubMenu {
                 .filter(abilities::containsKey)
                 .collect(Collectors.toSet())
                 .size();
-        int totalAbilities = (int) abilities.values().stream().filter(SpecialAbilityConfig::enabled).count();
+        int totalAbilities = (int) abilities.values().stream().filter(c -> c != null && c.enabled()).count();
 
         String displayName = plugin.getConfigManager().getMenuToolItemTitle();
         displayName = replacePlaceholders(displayName, display.getType(), currentLevel, nextLevel, usage, target,
