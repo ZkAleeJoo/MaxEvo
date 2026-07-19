@@ -54,7 +54,7 @@ public final class MaxEvo extends JavaPlugin {
                 .getColoredMessage("&1&lMaxEvo &8» &1        \\/     \\/      \\/        \\/             "));
 
         Bukkit.getConsoleSender().sendMessage(MessageUtils
-                .getColoredMessage("&5&lMaxEvo &8» &5The plugin has been enabled! Version: "));
+                .getColoredMessage("&1&lMaxEvo &8» &1It was activated correctly in the version"));
 
         startUpdateChecks();
     }
