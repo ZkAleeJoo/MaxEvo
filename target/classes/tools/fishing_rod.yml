@@ -1,0 +1,17 @@
+# MaxEvo Fishing Rod Configuration
+counting:
+  require-preferred-tool: true
+  strict-tool-category-match: true
+
+progress-display:
+  enabled: true
+  format: "&8■ &#4444FF{current} &8/ &#0000FF{target} &7Fish &8■"
+  completed-format: "&8■ &#55FF55&lMAXED &8■"
+  refresh-base-name-on-rename: false
+
+milestones:
+  milestone-1:
+    type: FISH_CAUGHT
+    count: 20
+    enchantment: LURE
+    level: 1
