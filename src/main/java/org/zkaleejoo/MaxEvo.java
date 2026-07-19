@@ -6,24 +6,19 @@ import org.zkaleejoo.scheduler.ScheduledTask;
 import org.zkaleejoo.scheduler.SchedulerAdapter;
 import org.zkaleejoo.scheduler.SchedulerAdapterFactory;
 import org.bstats.bukkit.Metrics;
-import org.zkaleejoo.commands.InfoMenuManager;
 import org.zkaleejoo.commands.MainCommand;
 import org.zkaleejoo.config.CustomConfig;
 import org.zkaleejoo.config.MainConfigManager;
-import org.zkaleejoo.grave.GraveManager;
-import org.zkaleejoo.listeners.GraveListener;
 import org.zkaleejoo.listeners.PlayerJoinListener;
 import org.zkaleejoo.utils.MessageUtils;
 import org.zkaleejoo.utils.UpdateChecker;
 
-public final class MaxGraves extends JavaPlugin {
+public final class MaxEvo extends JavaPlugin {
 
-    private static final int BSTATS_PLUGIN_ID = 31607;
+    private static final int BSTATS_PLUGIN_ID = 32769;
     private static final long UPDATE_CHECK_INTERVAL_TICKS = 20L * 60L * 60L * 5L;
 
     private MainConfigManager mainConfigManager;
-    private GraveManager graveManager;
-    private InfoMenuManager infoMenuManager;
     private String latestVersion;
     private Metrics metrics;
     private ScheduledTask updateCheckTask;
@@ -39,30 +34,27 @@ public final class MaxGraves extends JavaPlugin {
 
         mainConfigManager = new MainConfigManager(this);
         syncMetricsState();
-        graveManager = new GraveManager(this);
-        infoMenuManager = new InfoMenuManager(this);
 
         MainCommand mainCommand = new MainCommand(this);
-        registerCommand("maxgraves", mainCommand, mainCommand);
+        registerCommand("maxevo", mainCommand, mainCommand);
 
-        getServer().getPluginManager().registerEvents(new GraveListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
 
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&5&lMaxGraves &8» &5   _____      _____  ____  _____________________    _________   _______________ _________"));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&5&lMaxGraves &8» &5  /     \\    /  _  \\ \\   \\/  /  _____/\\______   \\  /  _  \\   \\ /   /\\_   _____//   _____/"));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&5&lMaxGraves &8» &5 /  \\ /  \\  /  /_\\  \\ \\     /   \\  ___ |       _/ /  /_\\  \\   Y   /  |    __)_ \\_____  \\ "));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&5&lMaxGraves &8» &5/    Y    \\/    |    \\/     \\    \\_\\  \\|    |   \\/    |    \\     /   |        \\/        \\"));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&5&lMaxGraves &8» &5\\____|__  /\\____|__  /___/\\  \\______  /|____|_  /\\____|__  /\\___/   /_______  /_______  /"));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&5&lMaxGraves &8» &5        \\/         \\/      \\_/      \\/        \\/         \\/                 \\/        \\/ "));
+        Bukkit.getConsoleSender().sendMessage(
+                MessageUtils.getColoredMessage("&1&lMaxEvo &8» &1   _____                 ___________            "));
+        Bukkit.getConsoleSender().sendMessage(
+                MessageUtils.getColoredMessage("&1&lMaxEvo &8» &1  /     \\ _____  ___  ___\\_   _____/__  ______  "));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils
+                .getColoredMessage("&1&lMaxEvo &8» &1 /  \\ /  \\\\__  \\ \\  \\/  / |    __)_\\  \\/ /  _ \\ "));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils
+                .getColoredMessage("&1&lMaxEvo &8» &1/    Y    \\/ __ \\_>    <  |        \\\\   (  <_> )"));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils
+                .getColoredMessage("&1&lMaxEvo &8» &1\\____|__  (____  /__/\\_ \\/_______  / \\_/ \\____/ "));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils
+                .getColoredMessage("&1&lMaxEvo &8» &1        \\/     \\/      \\/        \\/             "));
 
         Bukkit.getConsoleSender().sendMessage(MessageUtils
-                .getColoredMessage("&5&lMaxGraves &8» &5The plugin has been enabled! Version: "));
+                .getColoredMessage("&5&lMaxEvo &8» &5The plugin has been enabled! Version: "));
 
         startUpdateChecks();
     }
@@ -79,12 +71,8 @@ public final class MaxGraves extends JavaPlugin {
             metrics = null;
         }
 
-        if (graveManager != null) {
-            graveManager.clearAll();
-        }
-
         Bukkit.getConsoleSender().sendMessage(
-                MessageUtils.getColoredMessage("&5&lMaxGraves &8» &fThe plugin has been disabled! Version: "));
+                MessageUtils.getColoredMessage("&5&lMaxEvo &8» &fThe plugin has been disabled! Version: "));
     }
 
     @SuppressWarnings("null")
@@ -109,14 +97,6 @@ public final class MaxGraves extends JavaPlugin {
         return schedulerAdapter;
     }
 
-    public GraveManager getGraveManager() {
-        return graveManager;
-    }
-
-    public InfoMenuManager getInfoMenuManager() {
-        return infoMenuManager;
-    }
-
     private void checkUpdates() {
         if (!getConfigManager().isUpdateCheckEnabled()) {
             return;
@@ -126,17 +106,17 @@ public final class MaxGraves extends JavaPlugin {
             if (this.getPluginMeta().getVersion().equalsIgnoreCase(version)) {
                 this.latestVersion = null;
                 Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                        "&5&lMaxGraves &8» &aA check for updates was performed and nothing was found."));
+                        "&1&lMaxEvo &8» &aA check for updates was performed and nothing was found."));
             } else {
                 this.latestVersion = version;
 
                 Bukkit.getConsoleSender()
                         .sendMessage(MessageUtils
-                                .getColoredMessage("&5&lMaxGraves &8» &f&lNEW VERSION: &7" + version));
+                                .getColoredMessage("&1&lMaxEvo &8» &f&lNEW VERSION: &7" + version));
                 Bukkit.getConsoleSender().sendMessage(
                         MessageUtils
                                 .getColoredMessage(
-                                        "&5&lMaxGraves &8» &fDownload it now at the following link: &7https://modrinth.com/plugin/maxgraves"));
+                                        "&1&lMaxEvo &8» &fDownload it now at the following link: &7https://modrinth.com/plugin/maxgraves"));
             }
         });
     }
@@ -177,7 +157,6 @@ public final class MaxGraves extends JavaPlugin {
 
     public void reloadPluginState() {
         getConfigManager().reloadConfig();
-        getGraveManager().reloadSettings();
         syncMetricsState();
         startUpdateChecks();
     }

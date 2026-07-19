@@ -4,18 +4,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.zkaleejoo.MaxGraves;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.config.MainConfigManager;
 import org.zkaleejoo.utils.MessageUtils;
 
 public class PlayerJoinListener implements Listener {
 
-    private static final String UPDATE_NOTIFY_PERMISSION = "maxgrave.admin";
-    private static final String DOWNLOAD_URL = "https://modrinth.com/plugin/maxgraves";
+    private static final String UPDATE_NOTIFY_PERMISSION = "maxevo.admin";
+    private static final String DOWNLOAD_URL = "https://builtbybit.com/resources/maxevo.107277/";
 
-    private final MaxGraves plugin;
+    private final MaxEvo plugin;
 
-    public PlayerJoinListener(MaxGraves plugin) {
+    public PlayerJoinListener(MaxEvo plugin) {
         this.plugin = plugin;
     }
 

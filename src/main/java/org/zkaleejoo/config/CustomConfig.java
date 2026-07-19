@@ -3,7 +3,7 @@ package org.zkaleejoo.config;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.zkaleejoo.MaxGraves;
+import org.zkaleejoo.MaxEvo;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,14 +12,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 public class CustomConfig {
-    private MaxGraves plugin;
+    private MaxEvo plugin;
     private String fileName;
     private FileConfiguration fileConfiguration = null;
     private File file = null;
     private String folderName;
     private boolean newFile;
 
-    public CustomConfig(String fileName, String folderName, MaxGraves plugin, boolean newFile) {
+    public CustomConfig(String fileName, String folderName, MaxEvo plugin, boolean newFile) {
         this.fileName = fileName;
         this.folderName = folderName;
         this.plugin = plugin;

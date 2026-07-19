@@ -1,6 +1,6 @@
 package org.zkaleejoo.utils;
 
-import org.zkaleejoo.MaxGraves;
+import org.zkaleejoo.MaxEvo;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,10 +12,10 @@ import java.util.function.Consumer;
 
 public class UpdateChecker {
 
-    private static final String GITHUB_VERSION_URL = "https://gist.githubusercontent.com/ZkAleeJoo/0ca7af26a27a55b54c47d5f1ba877659/raw/MaxGraves-Version.txt";
-    private final MaxGraves plugin;
+    private static final String GITHUB_VERSION_URL = "https://gist.githubusercontent.com/ZkAleeJoo/39cf0287c59da7e1e38657a1ebbd6436/raw/MaxEvo-Version";
+    private final MaxEvo plugin;
 
-    public UpdateChecker(MaxGraves plugin) {
+    public UpdateChecker(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -27,7 +27,7 @@ public class UpdateChecker {
                 connection = (HttpURLConnection) url.openConnection();
 
                 connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", "MaxGraves-UpdateChecker");
+                connection.setRequestProperty("User-Agent", "MaxEvo-UpdateChecker");
                 connection.setConnectTimeout(5000);
                 connection.setReadTimeout(5000);
 

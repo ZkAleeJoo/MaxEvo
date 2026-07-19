@@ -4,9 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.zkaleejoo.MaxGraves;
-import org.zkaleejoo.grave.Grave;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.utils.MessageUtils;
 
 import java.util.ArrayList;
@@ -15,12 +13,11 @@ import java.util.List;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 
-    private static final String ADMIN_PERMISSION = "maxgrave.admin";
-    private static final String INFO_PERMISSION = "maxgrave.info";
+    private static final String ADMIN_PERMISSION = "maxevo.admin";
 
-    private final MaxGraves plugin;
+    private final MaxEvo plugin;
 
-    public MainCommand(MaxGraves plugin) {
+    public MainCommand(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -39,30 +36,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args.length > 0 && args[0].equalsIgnoreCase("info")) {
-            if (!sender.hasPermission(INFO_PERMISSION)) {
-                sender.sendMessage(MessageUtils.getColoredMessage(
-                        plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMsgNoPermission()));
-                return true;
-            }
-
-            if (!(sender instanceof Player player)) {
-                sender.sendMessage(MessageUtils.getColoredMessage(
-                        plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMsgOnlyPlayersCommand()));
-                return true;
-            }
-
-            List<Grave> graves = plugin.getGraveManager().getGravesByPlayer(player.getUniqueId());
-            if (graves.isEmpty()) {
-                player.sendMessage(MessageUtils.getColoredMessage(
-                        plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMsgInfoNoGrave()));
-                return true;
-            }
-
-            plugin.getInfoMenuManager().openMainMenu(player, 0);
-            return true;
-        }
-
         sender.sendMessage(MessageUtils.getColoredMessage(
                 plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMsgUsageCommand()));
         return true;
@@ -73,9 +46,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            if (sender.hasPermission(INFO_PERMISSION)) {
-                completions.add("info");
-            }
             if (sender.hasPermission(ADMIN_PERMISSION)) {
                 completions.addAll(Arrays.asList("reload"));
             }
