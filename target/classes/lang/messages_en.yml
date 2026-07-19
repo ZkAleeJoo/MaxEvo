@@ -1,0 +1,7 @@
+messages:
+  no-permission: "&cYou do not have permission to use this command."
+  plugin-reload: "&aSettings and messages have been successfully reloaded."
+  usage-command: "&cUse: /maxgraves <reload>"
+  grave-created: "&eYou have died. A tomb has been created to hold your belongings."
+  grave-claimed: "&aYou have recovered all your belongings and your experience from your tomb."
+  map-received: "&eA map has been added to your inventory to guide you to your grave."

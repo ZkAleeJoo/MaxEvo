@@ -1,0 +1,7 @@
+messages:
+  no-permission: "&cNo tienes permisos para usar este comando."
+  plugin-reload: "&aLa configuración y mensajes se han recargado correctamente."
+  usage-command: "&cUso: /maxgraves <reload>"
+  grave-created: "&eHas muerto. Se ha creado una tumba para guardar tus cosas."
+  grave-claimed: "&aHas recuperado todos tus objetos y tu experiencia de tu tumba."
+  map-received: "&eSe ha añadido un mapa a tu inventario para guiarte a tu tumba."

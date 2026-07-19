@@ -1,0 +1,17 @@
+name: MaxGraves
+version: '1.0.0'
+main: org.zkaleejoo.MaxGraves
+api-version: '1.21'
+authors: [ ZkAleeJoo ]
+description: Plugin based on typical Minecraft tombs
+
+commands:
+  maxgraves:
+    description: Main MaxGraves command
+    aliases: [mg]
+    permission: maxgraves.admin
+
+permissions:
+  maxgraves.admin:
+    description: Full access to MaxGraves and administrative commands.
+    default: op

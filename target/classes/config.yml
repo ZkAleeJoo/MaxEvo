@@ -1,0 +1,8 @@
+general:
+  language: "en"
+  prefix: "&#8A2BE2&lMaxGraves &8» "
+
+grave:
+  #Time in seconds before the tomb disappears (3600 = 1 hour)
+  despawn-time: 3600
+  create-on-death: true
