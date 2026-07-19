@@ -12,7 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 
 public class TestToolRegistry {
 
@@ -20,11 +20,11 @@ public class TestToolRegistry {
     private static final String TOOLS_PATH = "tools";
     private static final String NEXT_ID_PATH = "next-id";
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final File file;
     private FileConfiguration config;
 
-    public TestToolRegistry(MaxTools plugin) {
+    public TestToolRegistry(MaxEvo plugin) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), FILE_NAME);
         reload();

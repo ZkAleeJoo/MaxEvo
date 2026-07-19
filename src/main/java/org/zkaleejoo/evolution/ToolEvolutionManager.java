@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.EnumMap;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,7 +23,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.utils.MessageUtils;
 import org.zkaleejoo.utils.MetKeys;
 import org.bukkit.inventory.ItemFlag;
@@ -43,6 +44,7 @@ import org.zkaleejoo.evolution.abilities.SelfRepairAbilityHandler;
 import org.zkaleejoo.evolution.abilities.TelepathyAbilityHandler;
 import org.zkaleejoo.evolution.abilities.VeinMinerAbilityHandler;
 import org.zkaleejoo.evolution.abilities.XpBoostAbilityHandler;
+import org.zkaleejoo.evolution.abilities.LifestealAbilityHandler;
 
 @SuppressWarnings("null")
 public class ToolEvolutionManager {
@@ -55,7 +57,7 @@ public class ToolEvolutionManager {
         ENCHANTMENT_ALIASES.put("LOOT_BONUS_BLOCKS", "FORTUNE");
     }
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
     private final NamespacedKey blocksMinedKey;
     private final NamespacedKey specialUnlockedKey;
@@ -70,24 +72,31 @@ public class ToolEvolutionManager {
     private final NamespacedKey totalAbilityActivationsKey;
     private final NamespacedKey customToolIdKey;
     private final NamespacedKey testModeKey;
+    private final NamespacedKey mobsKilledKey;
+    private final NamespacedKey playersKilledKey;
+    private final NamespacedKey damageDealtKey;
+    private final NamespacedKey fishCaughtKey;
+    @SuppressWarnings("unused")
+    private final NamespacedKey toolCategoryKey;
     private final AbilityHandlerRegistry abilityHandlerRegistry;
     private final PlayerPlacedBlockTracker playerPlacedBlockTracker;
 
     private Set<Material> trackedTools = Collections.emptySet();
-    private List<EvolutionMilestone> milestones = new ArrayList<>();
-    private Map<String, SpecialAbilityConfig> specialAbilities = new LinkedHashMap<>();
-    private Set<Material> countingBlacklist = Collections.emptySet();
-    private Set<Material> countingWhitelist = Collections.emptySet();
-    private boolean countRequirePreferredTool = true;
-    private boolean strictToolCategoryMatch = true;
-    private boolean progressDisplayEnabled = true;
-    private String progressDisplayFormat = "&7[{current}/{target} {unit}]";
-    private String progressDisplayCompletedFormat = "&7[{current}/{target} {unit}]";
-    private boolean progressDisplayRefreshBaseNameOnRename = false;
+    private Map<ToolCategory, List<EvolutionMilestone>> milestonesByCategory = new EnumMap<>(ToolCategory.class);
+    private Map<ToolCategory, Map<String, SpecialAbilityConfig>> abilitiesByCategory = new EnumMap<>(
+            ToolCategory.class);
+    private Map<ToolCategory, Set<Material>> countingBlacklistByCategory = new EnumMap<>(ToolCategory.class);
+    private Map<ToolCategory, Set<Material>> countingWhitelistByCategory = new EnumMap<>(ToolCategory.class);
+    private Map<ToolCategory, Boolean> countRequirePreferredToolByCategory = new EnumMap<>(ToolCategory.class);
+    private Map<ToolCategory, Boolean> strictToolCategoryMatchByCategory = new EnumMap<>(ToolCategory.class);
+    private Map<ToolCategory, Boolean> progressDisplayEnabledByCategory = new EnumMap<>(ToolCategory.class);
+    private Map<ToolCategory, String> progressDisplayFormatByCategory = new EnumMap<>(ToolCategory.class);
+    private Map<ToolCategory, String> progressDisplayCompletedFormatByCategory = new EnumMap<>(ToolCategory.class);
+    private Map<ToolCategory, Boolean> progressDisplayRefreshByCategory = new EnumMap<>(ToolCategory.class);
     private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
     private final SelfRepairProgressTracker selfRepairProgressTracker = new SelfRepairProgressTracker();
 
-    public ToolEvolutionManager(MaxTools plugin, PlayerPlacedBlockTracker playerPlacedBlockTracker) {
+    public ToolEvolutionManager(MaxEvo plugin, PlayerPlacedBlockTracker playerPlacedBlockTracker) {
         this.plugin = plugin;
         this.playerPlacedBlockTracker = playerPlacedBlockTracker;
         this.blocksMinedKey = MetKeys.key(plugin, MetKeys.BLOCKS_MINED);
@@ -103,6 +112,11 @@ public class ToolEvolutionManager {
         this.totalAbilityActivationsKey = MetKeys.key(plugin, MetKeys.ABILITY_ACTIVATIONS_TOTAL);
         this.customToolIdKey = MetKeys.key(plugin, MetKeys.CUSTOM_TOOL_ID);
         this.testModeKey = MetKeys.key(plugin, MetKeys.TEST_MODE);
+        this.mobsKilledKey = MetKeys.key(plugin, MetKeys.MOBS_KILLED);
+        this.playersKilledKey = MetKeys.key(plugin, MetKeys.PLAYERS_KILLED);
+        this.damageDealtKey = MetKeys.key(plugin, MetKeys.DAMAGE_DEALT);
+        this.fishCaughtKey = MetKeys.key(plugin, MetKeys.FISH_CAUGHT);
+        this.toolCategoryKey = MetKeys.key(plugin, MetKeys.TOOL_CATEGORY);
         this.abilityHandlerRegistry = new AbilityHandlerRegistry()
                 .register(AbilityType.SELF_REPAIR, new SelfRepairAbilityHandler())
                 .register(AbilityType.AUTO_SMELT, new AutoSmeltAbilityHandler())
@@ -114,16 +128,48 @@ public class ToolEvolutionManager {
                 .register(AbilityType.HASTE, new HasteAbilityHandler())
                 .register(AbilityType.MOMENTUM, new MomentumAbilityHandler())
                 .register(AbilityType.LUCK_SURGE, new LuckSurgeAbilityHandler())
-                .register(AbilityType.SATURATION_PULSE, new SaturationPulseAbilityHandler());
+                .register(AbilityType.SATURATION_PULSE, new SaturationPulseAbilityHandler())
+                .register(AbilityType.LIFESTEAL, new LifestealAbilityHandler());
     }
 
     public void reload() {
-        FileConfiguration config = plugin.getConfigManager().getEvolutionConfig();
-        trackedTools = parseTrackedTools(config);
-        milestones = MilestoneConfigParser.parse(config, "milestones", plugin.getLogger()::warning);
-        specialAbilities = parseSpecialAbilities(config, "special-abilities", true);
-        parseCountingSettings(config);
-        parseProgressDisplaySettings(config);
+        Set<Material> allTracked = new java.util.HashSet<>();
+        for (ToolCategory category : ToolCategory.values()) {
+            org.bukkit.configuration.file.FileConfiguration config = plugin.getConfigManager()
+                    .getToolCategoryConfig(category);
+            if (config == null)
+                continue;
+            Set<Material> categoryTracked = parseTrackedTools(config);
+            allTracked.addAll(categoryTracked);
+            milestonesByCategory.put(category,
+                    MilestoneConfigParser.parse(config, "milestones", plugin.getLogger()::warning));
+            abilitiesByCategory.put(category, parseSpecialAbilities(config, "special-abilities", true));
+            parseCountingSettings(config, category);
+            parseProgressDisplaySettings(config, category);
+        }
+        trackedTools = java.util.Collections.unmodifiableSet(allTracked);
+    }
+
+    public java.util.List<EvolutionMilestone> getMilestonesForCategory(ToolCategory category) {
+        if (category == null)
+            return java.util.Collections.emptyList();
+        return milestonesByCategory.getOrDefault(category, java.util.Collections.emptyList());
+    }
+
+    public java.util.Map<String, SpecialAbilityConfig> getAbilitiesForCategory(ToolCategory category) {
+        if (category == null)
+            return java.util.Collections.emptyMap();
+        return abilitiesByCategory.getOrDefault(category, java.util.Collections.emptyMap());
+    }
+
+    public ToolCategory getToolCategory(Material material) {
+        return ToolCategory.fromMaterial(material);
+    }
+
+    public ToolCategory getToolCategory(org.bukkit.inventory.ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR)
+            return null;
+        return ToolCategory.fromMaterial(itemStack.getType());
     }
 
     public boolean isTrackedTool(ItemStack itemStack) {
@@ -143,7 +189,7 @@ public class ToolEvolutionManager {
             return false;
         }
 
-        if (hasMaxToolsData(meta)) {
+        if (hasMaxEvoData(meta)) {
             return !isCustomToolRevoked(meta);
         }
 
@@ -156,7 +202,7 @@ public class ToolEvolutionManager {
         }
 
         ItemMeta meta = itemStack.getItemMeta();
-        return meta != null && hasMaxToolsData(meta);
+        return meta != null && hasMaxEvoData(meta);
     }
 
     public boolean isCustomToolRevoked(ItemMeta meta) {
@@ -170,7 +216,7 @@ public class ToolEvolutionManager {
             return !plugin.getCustomToolDatabase().containsTool(toolId);
         }
 
-        return hasMaxToolsData(meta) && plugin.getCustomToolDatabase().getLastPurgeAt() > 0L;
+        return hasMaxEvoData(meta) && plugin.getCustomToolDatabase().getLastPurgeAt() > 0L;
     }
 
     public boolean ensureCustomToolRegistered(ItemStack itemStack, Player owner, boolean testTool) {
@@ -187,7 +233,7 @@ public class ToolEvolutionManager {
             return false;
         }
 
-        if (!hasMaxToolsData(meta) && !isCleanNewTool(meta)) {
+        if (!hasMaxEvoData(meta) && !isCleanNewTool(meta)) {
             return false;
         }
 
@@ -225,7 +271,7 @@ public class ToolEvolutionManager {
         return meta.getPersistentDataContainer().getOrDefault(customToolIdKey, PersistentDataType.STRING, "");
     }
 
-    private boolean hasMaxToolsData(ItemMeta meta) {
+    private boolean hasMaxEvoData(ItemMeta meta) {
         if (meta == null) {
             return false;
         }
@@ -247,7 +293,8 @@ public class ToolEvolutionManager {
         if (!meta.getPersistentDataContainer().getKeys().isEmpty()) {
             return false;
         }
-        if (meta.hasEnchants() || meta.hasLore() || meta.hasDisplayName() || !meta.getCustomModelDataComponent().getFloats().isEmpty()) {
+        if (meta.hasEnchants() || meta.hasLore() || meta.hasDisplayName()
+                || !meta.getCustomModelDataComponent().getFloats().isEmpty()) {
             return false;
         }
         if (!meta.getItemFlags().isEmpty() || meta.isUnbreakable()) {
@@ -274,15 +321,51 @@ public class ToolEvolutionManager {
     public int incrementUsage(ItemMeta itemMeta) {
         PersistentDataContainer container = itemMeta.getPersistentDataContainer();
         int current = container.getOrDefault(blocksMinedKey, PersistentDataType.INTEGER, 0);
-        int maxUsage = milestones.isEmpty() ? Integer.MAX_VALUE
-                : milestones.get(milestones.size() - 1).blocksRequired();
+        int maxUsage = Integer.MAX_VALUE;
+        for (java.util.List<EvolutionMilestone> catMilestones : milestonesByCategory.values()) {
+            if (!catMilestones.isEmpty()) {
+                maxUsage = Math.min(maxUsage, catMilestones.get(catMilestones.size() - 1).requiredCount());
+            }
+        }
         if (current >= maxUsage) {
             return current;
         }
-
         int updated = Math.min(maxUsage, current + 1);
         container.set(blocksMinedKey, PersistentDataType.INTEGER, updated);
         return updated;
+    }
+
+    public int incrementUsage(ItemMeta itemMeta, ToolCategory category,
+            org.zkaleejoo.evolution.ProgressType progressType, int amount) {
+        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+        org.bukkit.NamespacedKey counterKey = getCounterKey(progressType);
+        int current = container.getOrDefault(counterKey, PersistentDataType.INTEGER, 0);
+        java.util.List<EvolutionMilestone> categoryMilestones = getMilestonesForCategory(category).stream()
+                .filter(m -> m.progressType() == progressType).toList();
+        int maxUsage = categoryMilestones.isEmpty() ? Integer.MAX_VALUE
+                : categoryMilestones.get(categoryMilestones.size() - 1).requiredCount();
+        if (current >= maxUsage)
+            return current;
+        int updated = Math.min(maxUsage, current + amount);
+        container.set(counterKey, PersistentDataType.INTEGER, updated);
+        return updated;
+    }
+
+    public int getUsage(ItemMeta meta, org.zkaleejoo.evolution.ProgressType progressType) {
+        if (meta == null || progressType == null)
+            return 0;
+        return meta.getPersistentDataContainer().getOrDefault(getCounterKey(progressType), PersistentDataType.INTEGER,
+                0);
+    }
+
+    public org.bukkit.NamespacedKey getCounterKey(org.zkaleejoo.evolution.ProgressType progressType) {
+        return switch (progressType) {
+            case BLOCKS_BROKEN -> blocksMinedKey;
+            case MOBS_KILLED -> mobsKilledKey;
+            case PLAYERS_KILLED -> playersKilledKey;
+            case DAMAGE_DEALT -> damageDealtKey;
+            case FISH_CAUGHT -> fishCaughtKey;
+        };
     }
 
     public int getUsage(ItemStack itemStack) {
@@ -308,7 +391,8 @@ public class ToolEvolutionManager {
     }
 
     public void updateProgressDisplay(ItemStack itemStack, int usage, Player player) {
-        if (!progressDisplayEnabled || itemStack == null || itemStack.getType() == Material.AIR) {
+        if (!progressDisplayEnabledByCategory.getOrDefault(ToolCategory.fromMaterial(itemStack.getType()), true)
+                || itemStack == null || itemStack.getType() == Material.AIR) {
             return;
         }
 
@@ -322,7 +406,8 @@ public class ToolEvolutionManager {
     }
 
     public void updateProgressDisplay(ItemMeta meta, Material itemType, int usage) {
-        if (!progressDisplayEnabled || meta == null || itemType == Material.AIR) {
+        if (!progressDisplayEnabledByCategory.getOrDefault(ToolCategory.fromMaterial(itemType), true) || meta == null
+                || itemType == Material.AIR) {
             return;
         }
 
@@ -333,7 +418,7 @@ public class ToolEvolutionManager {
         String serializedCurrentDisplayName = currentDisplayNameComponent == null
                 ? null
                 : LEGACY_SERIALIZER.serialize(currentDisplayNameComponent);
-        if (progressDisplayRefreshBaseNameOnRename
+        if (progressDisplayRefreshByCategory.getOrDefault(ToolCategory.fromMaterial(itemType), false)
                 && meta.hasDisplayName()
                 && previouslyGeneratedDisplayName != null
                 && serializedCurrentDisplayName != null
@@ -350,7 +435,7 @@ public class ToolEvolutionManager {
 
         int target = resolveCurrentTarget(usage);
         int displayedUsage = Math.min(usage, target);
-        String renderedProgress = renderProgress(usage, displayedUsage, target);
+        String renderedProgress = renderProgress(itemType, usage, displayedUsage, target);
         String updatedDisplayName = MessageUtils.getColoredMessage(baseName + " " + renderedProgress);
         if (updatedDisplayName.equals(serializedCurrentDisplayName)) {
             return;
@@ -428,17 +513,19 @@ public class ToolEvolutionManager {
     }
 
     private int resolveCurrentTarget(Material toolType, int usage) {
-        if (milestones.isEmpty()) {
+        ToolCategory category = ToolCategory.fromMaterial(toolType);
+        java.util.List<EvolutionMilestone> categoryMilestones = getMilestonesForCategory(category);
+        if (categoryMilestones.isEmpty()) {
             return Math.max(1, usage);
         }
 
-        for (EvolutionMilestone milestone : milestones) {
-            if (usage < milestone.blocksRequired()) {
-                return milestone.blocksRequired();
+        for (EvolutionMilestone milestone : categoryMilestones) {
+            if (usage < milestone.requiredCount()) {
+                return milestone.requiredCount();
             }
         }
 
-        return milestones.get(milestones.size() - 1).blocksRequired();
+        return categoryMilestones.get(categoryMilestones.size() - 1).requiredCount();
     }
 
     public int getCurrentTarget(int usage) {
@@ -464,19 +551,30 @@ public class ToolEvolutionManager {
     }
 
     public List<EvolutionMilestone> getMilestones() {
-        return List.copyOf(milestones);
+        java.util.List<EvolutionMilestone> all = new java.util.ArrayList<>();
+        for (java.util.List<EvolutionMilestone> catMilestones : milestonesByCategory.values()) {
+            all.addAll(catMilestones);
+        }
+        return all;
     }
 
     public List<EvolutionMilestone> getMilestones(Material toolType) {
-        return List.copyOf(milestones);
+        ToolCategory category = ToolCategory.fromMaterial(toolType);
+        return getMilestonesForCategory(category);
     }
 
     public Map<String, SpecialAbilityConfig> getSpecialAbilities() {
-        return Map.copyOf(specialAbilities);
+        java.util.Map<String, SpecialAbilityConfig> all = new java.util.LinkedHashMap<>();
+        for (java.util.Map<String, SpecialAbilityConfig> catAbilities : abilitiesByCategory.values()) {
+            all.putAll(catAbilities);
+        }
+        return all;
     }
 
     public Map<String, SpecialAbilityConfig> getSpecialAbilities(Material toolType) {
-        return Map.copyOf(specialAbilities);
+        ToolCategory category = ToolCategory.fromMaterial(toolType);
+        return category != null ? java.util.Map.copyOf(getAbilitiesForCategory(category))
+                : java.util.Collections.emptyMap();
     }
 
     public AbilityHandlerRegistry getAbilityHandlerRegistry() {
@@ -501,7 +599,7 @@ public class ToolEvolutionManager {
         Map<String, Integer> requiredBlocksByAbility = getRequiredBlocksByAbility(toolType);
         List<AbilityStatus> statuses = new ArrayList<>();
 
-        for (SpecialAbilityConfig ability : specialAbilities.values()) {
+        for (SpecialAbilityConfig ability : getAbilitiesForCategory(ToolCategory.fromMaterial(toolType)).values()) {
             if (!ability.enabled()) {
                 continue;
             }
@@ -523,16 +621,18 @@ public class ToolEvolutionManager {
     public ToolDerivedStats getDerivedStats(ItemMeta meta, Material toolType, int usage) {
         int safeUsage = Math.max(0, usage);
         int unlockedMilestones = getReachedMilestonesCount(toolType, safeUsage);
-        int totalMilestones = milestones.size();
+        int totalMilestones = getMilestonesForCategory(ToolCategory.fromMaterial(toolType)).size();
         int milestonePercent = totalMilestones <= 0
                 ? 100
                 : (int) Math.round((unlockedMilestones * 100.0D) / totalMilestones);
 
-        int totalAbilities = (int) specialAbilities.values().stream().filter(SpecialAbilityConfig::enabled).count();
+        int totalAbilities = (int) getAbilitiesForCategory(ToolCategory.fromMaterial(toolType)).values().stream()
+                .filter(SpecialAbilityConfig::enabled).count();
         int unlockedAbilities = meta == null ? 0
                 : (int) getUnlockedAbilities(meta.getPersistentDataContainer()).stream()
                         .filter(id -> {
-                            SpecialAbilityConfig ability = specialAbilities.get(id);
+                            SpecialAbilityConfig ability = getAbilitiesForCategory(ToolCategory.fromMaterial(toolType))
+                                    .get(id);
                             return ability != null && ability.enabled();
                         })
                         .count();
@@ -567,7 +667,7 @@ public class ToolEvolutionManager {
             return stats;
         }
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        for (SpecialAbilityConfig ability : specialAbilities.values()) {
+        for (SpecialAbilityConfig ability : getAbilitiesForCategory(ToolCategory.fromMaterial(toolType)).values()) {
             if (!ability.enabled()) {
                 continue;
             }
@@ -607,8 +707,12 @@ public class ToolEvolutionManager {
         return MetKeys.abilityActivationKey(plugin, abilityId);
     }
 
-    private String renderProgress(int usage, int displayedUsage, int target) {
-        String format = usage >= target ? progressDisplayCompletedFormat : progressDisplayFormat;
+    private String renderProgress(Material itemType, int usage, int displayedUsage, int target) {
+        String format = usage >= target
+                ? progressDisplayCompletedFormatByCategory.getOrDefault(ToolCategory.fromMaterial(itemType),
+                        "&7[{current}/{target} {unit}]")
+                : progressDisplayFormatByCategory.getOrDefault(ToolCategory.fromMaterial(itemType),
+                        "&7[{current}/{target} {unit}]");
         String progressUnit = plugin.getConfigManager().getProgressUnit();
         return MessageUtils.getColoredMessage(format
                 .replace("{current}", String.valueOf(displayedUsage))
@@ -630,19 +734,26 @@ public class ToolEvolutionManager {
             return false;
         }
 
-        if (!countingWhitelist.isEmpty() && !countingWhitelist.contains(type)) {
+        ToolCategory category = ToolCategory.fromMaterial(tool.getType());
+        java.util.Set<Material> wList = countingWhitelistByCategory.getOrDefault(category,
+                java.util.Collections.emptySet());
+        if (!wList.isEmpty() && !wList.contains(type)) {
             return false;
         }
 
-        if (countingBlacklist.contains(type)) {
+        java.util.Set<Material> bList = countingBlacklistByCategory.getOrDefault(category,
+                java.util.Collections.emptySet());
+        if (!bList.isEmpty() && bList.contains(type)) {
             return false;
         }
 
-        if (strictToolCategoryMatch && !matchesToolCategory(block, tool.getType())) {
+        boolean strict = strictToolCategoryMatchByCategory.getOrDefault(category, true);
+        if (strict && !matchesToolCategory(block, tool.getType())) {
             return false;
         }
 
-        return !countRequirePreferredTool || block.isPreferredTool(tool);
+        boolean reqPref = countRequirePreferredToolByCategory.getOrDefault(category, true);
+        return !reqPref || block.isPreferredTool(tool);
     }
 
     private boolean matchesToolCategory(Block block, Material toolType) {
@@ -682,7 +793,8 @@ public class ToolEvolutionManager {
         if (abilityId == null || abilityId.isBlank()) {
             return null;
         }
-        return specialAbilities.get(abilityId.trim().toLowerCase(Locale.ROOT));
+        ToolCategory category = ToolCategory.fromMaterial(toolType);
+        return getAbilitiesForCategory(category).get(abilityId.trim().toLowerCase(java.util.Locale.ROOT));
     }
 
     public EvolutionSyncResult syncEvolution(ItemStack itemStack) {
@@ -694,7 +806,7 @@ public class ToolEvolutionManager {
         if (meta == null) {
             return new EvolutionSyncResult(false, 0, 0, 0);
         }
-        if (!hasMaxToolsData(meta)) {
+        if (!hasMaxEvoData(meta)) {
             return new EvolutionSyncResult(false, 0, 0, 0);
         }
 
@@ -707,7 +819,7 @@ public class ToolEvolutionManager {
         if (meta == null) {
             return new EvolutionSyncResult(false, 0, 0, 0);
         }
-        if (!hasMaxToolsData(meta)) {
+        if (!hasMaxEvoData(meta)) {
             return new EvolutionSyncResult(false, 0, 0, 0);
         }
 
@@ -716,8 +828,8 @@ public class ToolEvolutionManager {
         EvolutionSyncPlan plan = EvolutionSyncPlanner.plan(
                 usage,
                 getUnlockedAbilitiesInternal(container),
-                milestones,
-                specialAbilities.keySet());
+                getMilestonesForCategory(ToolCategory.fromMaterial(toolType)),
+                getAbilitiesForCategory(ToolCategory.fromMaterial(toolType)).keySet());
 
         boolean changed = false;
         int appliedMilestones = 0;
@@ -780,8 +892,8 @@ public class ToolEvolutionManager {
 
     public List<EvolutionMilestone> getReachedMilestones(Material toolType, int usage) {
         List<EvolutionMilestone> reached = new ArrayList<>();
-        for (EvolutionMilestone milestone : milestones) {
-            if (usage >= milestone.blocksRequired()) {
+        for (EvolutionMilestone milestone : getMilestonesForCategory(ToolCategory.fromMaterial(toolType))) {
+            if (usage >= milestone.requiredCount()) {
                 reached.add(milestone);
             }
         }
@@ -819,8 +931,8 @@ public class ToolEvolutionManager {
 
         List<EvolutionMilestone> newlyReached = new ArrayList<>();
         int newLastApplied = lastApplied;
-        for (EvolutionMilestone milestone : milestones) {
-            int required = milestone.blocksRequired();
+        for (EvolutionMilestone milestone : getMilestonesForCategory(ToolCategory.fromMaterial(toolType))) {
+            int required = milestone.requiredCount();
             if (required <= lastApplied) {
                 continue;
             }
@@ -879,7 +991,8 @@ public class ToolEvolutionManager {
             boolean unlockedChanged = false;
             for (String abilityId : milestone.unlockAbilities()) {
                 String normalized = abilityId.toLowerCase(Locale.ROOT);
-                if (specialAbilities.containsKey(normalized) && unlocked.add(normalized)) {
+                if (getAbilitiesForCategory(ToolCategory.fromMaterial(toolType)).containsKey(normalized)
+                        && unlocked.add(normalized)) {
                     unlockedChanged = true;
                 }
             }
@@ -905,7 +1018,9 @@ public class ToolEvolutionManager {
     }
 
     public List<String> getAbilitiesToNotify(EvolutionMilestone milestone, Material toolType) {
-        Map<String, SpecialAbilityConfig> abilities = specialAbilities;
+        Map<String, SpecialAbilityConfig> abilities = toolType != null
+                ? getAbilitiesForCategory(ToolCategory.fromMaterial(toolType))
+                : getSpecialAbilities();
         return milestone.unlockAbilities().stream()
                 .map(s -> s.toLowerCase(Locale.ROOT))
                 .filter(abilities::containsKey)
@@ -925,7 +1040,8 @@ public class ToolEvolutionManager {
 
         boolean changed = false;
         for (String abilityId : unlocked) {
-            SpecialAbilityConfig ability = specialAbilities.get(abilityId);
+            SpecialAbilityConfig ability = getAbilitiesForCategory(ToolCategory.fromMaterial(tool.getType()))
+                    .get(abilityId);
             if (ability == null || ability.type() != AbilityType.SELF_REPAIR
                     || ability.trigger() != AbilityTrigger.BLOCK_BREAK) {
                 continue;
@@ -955,7 +1071,9 @@ public class ToolEvolutionManager {
             return false;
         }
 
-        Map<String, SpecialAbilityConfig> abilities = specialAbilities;
+        Map<String, SpecialAbilityConfig> abilities = toolType != null
+                ? getAbilitiesForCategory(ToolCategory.fromMaterial(toolType))
+                : getSpecialAbilities();
         boolean changed = false;
         for (String abilityId : unlockedAbilities) {
             SpecialAbilityConfig ability = abilities.get(abilityId);
@@ -1203,8 +1321,8 @@ public class ToolEvolutionManager {
 
     private int getReachedMilestonesCount(Material toolType, int usage) {
         int reached = 0;
-        for (EvolutionMilestone milestone : milestones) {
-            if (usage >= milestone.blocksRequired()) {
+        for (EvolutionMilestone milestone : getMilestonesForCategory(ToolCategory.fromMaterial(toolType))) {
+            if (usage >= milestone.requiredCount()) {
                 reached++;
             }
         }
@@ -1288,11 +1406,11 @@ public class ToolEvolutionManager {
 
     private Map<String, Integer> getRequiredBlocksByAbility(Material toolType) {
         Map<String, Integer> required = new HashMap<>();
-        for (EvolutionMilestone milestone : milestones) {
-            int blocksRequired = milestone.blocksRequired();
+        for (EvolutionMilestone milestone : getMilestonesForCategory(ToolCategory.fromMaterial(toolType))) {
+            int blocksRequired = milestone.requiredCount();
             for (String abilityId : milestone.unlockAbilities()) {
                 String normalized = abilityId.toLowerCase(Locale.ROOT);
-                if (!specialAbilities.containsKey(normalized)) {
+                if (!getAbilitiesForCategory(ToolCategory.fromMaterial(toolType)).containsKey(normalized)) {
                     continue;
                 }
                 required.merge(normalized, blocksRequired, (a, b) -> Math.min(a, b));
@@ -1517,32 +1635,35 @@ public class ToolEvolutionManager {
         return raw;
     }
 
-    private void parseCountingSettings(FileConfiguration config) {
-        countRequirePreferredTool = config.getBoolean("counting.require-preferred-tool", true);
-        strictToolCategoryMatch = config.getBoolean("counting.strict-tool-category-match", true);
-        countingWhitelist = parseMaterialSet(config, "counting.whitelist-materials");
+    private void parseCountingSettings(FileConfiguration config, ToolCategory category) {
+        countRequirePreferredToolByCategory.put(category, config.getBoolean("counting.require-preferred-tool", true));
+        strictToolCategoryMatchByCategory.put(category, config.getBoolean("counting.strict-tool-category-match", true));
+        countingWhitelistByCategory.put(category, parseMaterialSet(config, "counting.whitelist-materials"));
 
         if (config.contains("counting.blacklist-materials")) {
             Set<Material> configuredBlacklist = parseMaterialSet(config, "counting.blacklist-materials");
-            countingBlacklist = configuredBlacklist.isEmpty() ? buildDefaultCountingBlacklist() : configuredBlacklist;
+            countingBlacklistByCategory.put(category,
+                    configuredBlacklist.isEmpty() ? buildDefaultCountingBlacklist() : configuredBlacklist);
             return;
         }
 
-        countingBlacklist = buildDefaultCountingBlacklist();
+        countingBlacklistByCategory.put(category, buildDefaultCountingBlacklist());
     }
 
-    private void parseProgressDisplaySettings(FileConfiguration config) {
-        progressDisplayEnabled = config.getBoolean("progress-display.enabled", true);
-        progressDisplayFormat = config.getString("progress-display.format", "&7[{current}/{target} {unit}]");
-        if (progressDisplayFormat == null || progressDisplayFormat.isBlank()) {
-            progressDisplayFormat = "&7[{current}/{target} {unit}]";
+    private void parseProgressDisplaySettings(FileConfiguration config, ToolCategory category) {
+        progressDisplayEnabledByCategory.put(category, config.getBoolean("progress-display.enabled", true));
+        String pFormat = config.getString("progress-display.format", "&7[{current}/{target} {unit}]");
+        if (pFormat == null || pFormat.isBlank()) {
+            pFormat = "&7[{current}/{target} {unit}]";
         }
-        progressDisplayCompletedFormat = config.getString("progress-display.completed-format", progressDisplayFormat);
-        if (progressDisplayCompletedFormat == null || progressDisplayCompletedFormat.isBlank()) {
-            progressDisplayCompletedFormat = progressDisplayFormat;
+        progressDisplayFormatByCategory.put(category, pFormat);
+        String pCompletedFormat = config.getString("progress-display.completed-format", pFormat);
+        if (pCompletedFormat == null || pCompletedFormat.isBlank()) {
+            pCompletedFormat = pFormat;
         }
-        progressDisplayRefreshBaseNameOnRename = config.getBoolean("progress-display.refresh-base-name-on-rename",
-                false);
+        progressDisplayCompletedFormatByCategory.put(category, pCompletedFormat);
+        progressDisplayRefreshByCategory.put(category, config.getBoolean("progress-display.refresh-base-name-on-rename",
+                false));
     }
 
     private Set<Material> parseMaterialSet(FileConfiguration config, String path) {

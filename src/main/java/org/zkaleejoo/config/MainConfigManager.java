@@ -1,7 +1,7 @@
 package org.zkaleejoo.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -17,14 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.zkaleejoo.evolution.ToolCategory;
+import java.util.EnumMap;
 
 public class MainConfigManager {
 
     private final CustomConfig configFile;
     private CustomConfig langFile;
-    private final CustomConfig evolutionFile;
+    private final Map<ToolCategory, CustomConfig> toolCategoryConfigs = new EnumMap<>(ToolCategory.class);
     private final CustomConfig menusFile;
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private String selectedLanguage;
     private boolean languageProfileSyncEnabled;
     private static final String LANGUAGE_PROFILES_FOLDER = "language_profiles";
@@ -103,14 +105,18 @@ public class MainConfigManager {
     private String msgTestToolCreated;
     private String msgTestToolNoAbilities;
 
-    public MainConfigManager(MaxTools plugin) {
+    public MainConfigManager(MaxEvo plugin) {
         this.plugin = plugin;
         configFile = new CustomConfig("config.yml", null, plugin, false);
-        evolutionFile = new CustomConfig("evolution.yml", null, plugin, false);
         menusFile = new CustomConfig("menus.yml", null, plugin, false);
         configFile.registerConfig();
-        evolutionFile.registerConfig();
         menusFile.registerConfig();
+        
+        for (ToolCategory category : ToolCategory.values()) {
+            CustomConfig categoryConfig = new CustomConfig(category.getConfigFileName(), "tools", plugin, false);
+            categoryConfig.registerConfig();
+            toolCategoryConfigs.put(category, categoryConfig);
+        }
         ensureDefaultLanguageProfiles();
         loadConfig();
     }
@@ -126,7 +132,7 @@ public class MainConfigManager {
         FileConfiguration lang = langFile.getConfig();
 
         // CONFIG
-        prefix = config.getString("general.prefix", "&#222DF5&lMaxTools &8» ");
+        prefix = config.getString("general.prefix", "&#222DF5&lMaxEvo &8» ");
         evolutionLoreBasePath = config.isConfigurationSection("evolution-lore")
                 ? "evolution-lore"
                 : "general.evolution-lore";
@@ -150,7 +156,7 @@ public class MainConfigManager {
         msgEnabledWord = lang.getString("messages.enabled-word", "Enabled");
         msgDisabledWord = lang.getString("messages.disabled-word", "Disabled");
         msgCommandUsage = lang.getString("messages.command-usage",
-                "&cUsage: /maxtools <reload|toolinfo [gui|text]|menu|preview|discordtest|dctest|testtool|cleartesttool|admintoolsremove|lang>");
+                "&cUsage: /maxevo <reload|toolinfo [gui|text]|menu|preview|discordtest|dctest|testtool|cleartesttool|admintoolsremove|lang>");
         msgUpdateAvailable = lang.getString("messages.update-available",
                 "&f&lNEW VERSION: &7{version}");
         msgUpdateCurrent = lang.getString("messages.update-current",
@@ -177,7 +183,7 @@ public class MainConfigManager {
         msgClearTestToolIdRemoved = lang.getString("messages.clear-testtool-id-removed",
                 "&aTest tool ID &e{id}&a removed from the registry.");
         msgCustomToolRevoked = lang.getString("messages.custom-tool-revoked",
-                "&cThis MaxTools tool is no longer registered and was removed.");
+                "&cThis MaxEvo tool is no longer registered and was removed.");
         msgAdminToolsRemoveUsage = lang.getString("messages.admintoolsremove-usage",
                 "&cUse: /met admintoolsremove confirm");
         msgAdminToolsRemoveStarted = lang.getString("messages.admintoolsremove-started",
@@ -270,8 +276,10 @@ public class MainConfigManager {
     public void reloadConfig() {
         configFile.reloadConfig();
         configFile.updateConfig();
-        evolutionFile.reloadConfig();
-        evolutionFile.updateConfig();
+        for (CustomConfig categoryConfig : toolCategoryConfigs.values()) {
+            categoryConfig.reloadConfig();
+            categoryConfig.updateConfig();
+        }
         menusFile.reloadConfig();
         menusFile.updateConfig();
         if (langFile != null) {
@@ -543,7 +551,22 @@ public class MainConfigManager {
     }
 
     public FileConfiguration getEvolutionConfig() {
-        return evolutionFile.getConfig();
+        // Fallback for legacy calls
+        return getToolCategoryConfig(ToolCategory.PICKAXE);
+    }
+
+    public FileConfiguration getToolCategoryConfig(ToolCategory category) {
+        if (category == null) return null;
+        CustomConfig config = toolCategoryConfigs.get(category);
+        return config != null ? config.getConfig() : null;
+    }
+
+    public Map<ToolCategory, FileConfiguration> getAllToolCategoryConfigs() {
+        Map<ToolCategory, FileConfiguration> configs = new EnumMap<>(ToolCategory.class);
+        for (Map.Entry<ToolCategory, CustomConfig> entry : toolCategoryConfigs.entrySet()) {
+            configs.put(entry.getKey(), entry.getValue().getConfig());
+        }
+        return configs;
     }
 
     public String getEnchantmentName(String enchantmentKey) {
@@ -901,6 +924,17 @@ public class MainConfigManager {
             created |= copyFileIfAbsent(dataFolder.resolve("menus.yml"), getProfilePath("menus", "en"));
             created |= copyResourceToFileIfAbsent("extra_lang/config_es.yml", getProfilePath("config", "es"));
             created |= copyResourceToFileIfAbsent("extra_lang/menus_es.yml", getProfilePath("menus", "es"));
+            
+            for (ToolCategory category : ToolCategory.values()) {
+                String baseName = "tools/" + category.getId();
+                created |= copyFileIfAbsent(dataFolder.resolve("tools").resolve(category.getId() + ".yml"), getProfilePath(baseName, "en"));
+                // Since we don't have es tool resources yet, this will just gracefully skip if the resource doesn't exist
+                try {
+                    created |= copyResourceToFileIfAbsent("extra_lang/tools/" + category.getId() + "_es.yml", getProfilePath(baseName, "es"));
+                } catch (IOException e) {
+                    // Ignore missing es translation
+                }
+            }
 
             if (created) {
                 plugin.getLogger().info("Initial language profiles generated in '"
@@ -919,6 +953,9 @@ public class MainConfigManager {
             snapshotCurrentLanguageProfile();
             applyTemplateOrProfile(normalized, "config");
             applyTemplateOrProfile(normalized, "menus");
+            for (ToolCategory category : ToolCategory.values()) {
+                applyTemplateOrProfile(normalized, "tools/" + category.getId());
+            }
             refreshRuntimeDefaults();
             return true;
         } catch (IOException ex) {
@@ -934,6 +971,9 @@ public class MainConfigManager {
         String current = selectedLanguage.toLowerCase(Locale.ROOT).trim();
         copyFile(plugin.getDataFolder().toPath().resolve("config.yml"), getProfilePath("config", current));
         copyFile(plugin.getDataFolder().toPath().resolve("menus.yml"), getProfilePath("menus", current));
+        for (ToolCategory category : ToolCategory.values()) {
+            copyFile(plugin.getDataFolder().toPath().resolve("tools").resolve(category.getId() + ".yml"), getProfilePath("tools/" + category.getId(), current));
+        }
     }
 
     private void applyTemplateOrProfile(String languageCode, String baseName) throws IOException {
@@ -948,6 +988,10 @@ public class MainConfigManager {
     }
 
     private String getLanguageTemplateResourcePath(String languageCode, String baseName) throws IOException {
+        if (baseName.startsWith("tools/")) {
+            String toolName = baseName.substring(6);
+            return "en".equals(languageCode) ? "tools/" + toolName + ".yml" : "extra_lang/tools/" + toolName + "_es.yml";
+        }
         return switch (baseName) {
             case "config" -> "en".equals(languageCode) ? "config.yml" : "extra_lang/config_es.yml";
             case "menus" -> "en".equals(languageCode) ? "menus.yml" : "extra_lang/menus_es.yml";
@@ -956,6 +1000,13 @@ public class MainConfigManager {
     }
 
     private Path getProfilePath(String baseName, String languageCode) {
+        if (baseName.startsWith("tools/")) {
+            String toolName = baseName.substring(6);
+            return plugin.getDataFolder().toPath()
+                    .resolve(LANGUAGE_PROFILES_FOLDER)
+                    .resolve("tools")
+                    .resolve(toolName + "_" + languageCode + ".yml");
+        }
         return plugin.getDataFolder().toPath()
                 .resolve(LANGUAGE_PROFILES_FOLDER)
                 .resolve(baseName + "_" + languageCode + ".yml");

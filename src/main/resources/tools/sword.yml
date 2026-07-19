@@ -1,0 +1,33 @@
+# MaxEvo Sword Configuration
+counting:
+  require-preferred-tool: true
+  strict-tool-category-match: true
+
+progress-display:
+  enabled: true
+  format: "&8■ &#FF4444{current} &8/ &#FF0000{target} &7Kills &8■"
+  completed-format: "&8■ &#55FF55&lMAXED &8■"
+  refresh-base-name-on-rename: false
+
+milestones:
+  milestone-1:
+    type: MOBS_KILLED
+    count: 50
+    enchantment: SHARPNESS
+    level: 1
+  milestone-2:
+    type: MOBS_KILLED
+    count: 150
+    unlock-abilities:
+      - lifesteal
+
+special-abilities:
+  lifesteal:
+    type: LIFESTEAL
+    enabled: true
+    trigger: ENTITY_KILL
+    chance: 1.0
+    amount: 2.0
+    cooldown-seconds: 5
+    require-main-hand: true
+    compatible-with-mending: true

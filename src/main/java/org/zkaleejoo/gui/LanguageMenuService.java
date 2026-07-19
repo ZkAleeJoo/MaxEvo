@@ -22,7 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 
 public class LanguageMenuService implements Listener {
 
@@ -36,9 +36,9 @@ public class LanguageMenuService implements Listener {
         return Base64.getEncoder().encodeToString(json.getBytes());
     }
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public LanguageMenuService(MaxTools plugin) {
+    public LanguageMenuService(MaxEvo plugin) {
         this.plugin = plugin;
     }
 

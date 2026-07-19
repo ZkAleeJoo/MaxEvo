@@ -9,13 +9,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.evolution.SpecialAbilityConfig;
 import org.zkaleejoo.evolution.ToolEvolutionManager;
 
 public class BlockBreakAbilityContext {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final ToolEvolutionManager evolutionManager;
     private final BlockBreakEvent event;
     private final Player player;
@@ -26,7 +26,7 @@ public class BlockBreakAbilityContext {
     private boolean dropsDispatched;
 
     public BlockBreakAbilityContext(
-            MaxTools plugin,
+            MaxEvo plugin,
             ToolEvolutionManager evolutionManager,
             BlockBreakEvent event,
             Player player,
@@ -76,7 +76,7 @@ public class BlockBreakAbilityContext {
         return dropsDispatched;
     }
 
-    public MaxTools plugin() {
+    public MaxEvo plugin() {
         return plugin;
     }
 

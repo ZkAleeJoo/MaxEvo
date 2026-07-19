@@ -1,7 +1,7 @@
 package org.zkaleejoo.utils;
 
 import org.bukkit.Bukkit;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,10 +13,10 @@ import java.util.function.Consumer;
 
 public class UpdateChecker {
 
-    private static final String GITHUB_VERSION_URL = "https://gist.githubusercontent.com/ZkAleeJoo/29cb10190b642f4dded842d731a044e0/raw/MaxTools-Version.txt";
-    private final MaxTools plugin;
+    private static final String GITHUB_VERSION_URL = "https://gist.githubusercontent.com/ZkAleeJoo/29cb10190b642f4dded842d731a044e0/raw/MaxEvo-Version.txt";
+    private final MaxEvo plugin;
 
-    public UpdateChecker(MaxTools plugin) {
+    public UpdateChecker(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -28,7 +28,7 @@ public class UpdateChecker {
                 connection = (HttpURLConnection) url.openConnection();
 
                 connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", "MaxTools-UpdateChecker");
+                connection.setRequestProperty("User-Agent", "MaxEvo-UpdateChecker");
                 connection.setConnectTimeout(5000);
                 connection.setReadTimeout(5000);
 

@@ -3,14 +3,14 @@ package org.zkaleejoo.commands.subcommands;
 import java.util.Collections;
 import java.util.List;
 import org.bukkit.command.CommandSender;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.utils.MessageUtils;
 
 public class ReloadSubCommand implements SubCommand {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public ReloadSubCommand(MaxTools plugin) {
+    public ReloadSubCommand(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -21,7 +21,7 @@ public class ReloadSubCommand implements SubCommand {
 
     @Override
     public String getPermission() {
-        return "maxtools.admin.reload";
+        return "maxevo.admin.reload";
     }
 
     @Override

@@ -13,7 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.evolution.EvolutionMilestone;
 import org.zkaleejoo.evolution.SpecialAbilityConfig;
 import org.zkaleejoo.evolution.ToolEvolutionManager;
@@ -22,10 +22,10 @@ import org.zkaleejoo.utils.MetKeys;
 
 public class EvolutionHubMenu {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final ToolEvolutionManager evolutionManager;
 
-    public EvolutionHubMenu(MaxTools plugin, ToolEvolutionManager evolutionManager) {
+    public EvolutionHubMenu(MaxEvo plugin, ToolEvolutionManager evolutionManager) {
         this.plugin = plugin;
         this.evolutionManager = evolutionManager;
     }

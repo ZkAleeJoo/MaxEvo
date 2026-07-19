@@ -21,7 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.evolution.EvolutionMilestone;
 import org.zkaleejoo.utils.MetKeys;
 
@@ -30,7 +30,7 @@ public class EvolutionMenuService implements Listener {
 
     private static final long PAGE_STATE_TTL_MILLIS = 60_000L;
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final MilestoneTreeMenu milestoneTreeMenu;
     private final MilestoneDetailMenu milestoneDetailMenu;
     private final Map<UUID, MenuSession> sessions = new HashMap<>();
@@ -41,7 +41,7 @@ public class EvolutionMenuService implements Listener {
     private final Set<UUID> previewViewers = new HashSet<>();
     private final AdminPreviewMenu adminPreviewMenu;
 
-    public EvolutionMenuService(MaxTools plugin) {
+    public EvolutionMenuService(MaxEvo plugin) {
         this.plugin = plugin;
         this.milestoneTreeMenu = new MilestoneTreeMenu(plugin, plugin.getToolEvolutionManager());
         this.milestoneDetailMenu = new MilestoneDetailMenu(plugin, plugin.getToolEvolutionManager());
@@ -181,7 +181,7 @@ public class EvolutionMenuService implements Listener {
             }
             Optional<EvolutionMilestone> selected = plugin.getToolEvolutionManager()
                     .getMilestones(session.getToolType()).stream()
-                    .filter(m -> m.blocksRequired() == milestoneBlocks)
+                    .filter(m -> m.requiredCount() == milestoneBlocks)
                     .findFirst();
             if (selected.isEmpty()) {
                 return;

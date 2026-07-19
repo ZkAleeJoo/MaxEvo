@@ -22,12 +22,12 @@ import org.zkaleejoo.gui.EvolutionMenuService;
 import org.zkaleejoo.gui.LanguageMenuService;
 import org.zkaleejoo.storage.CustomToolDatabase;
 
-public final class MaxTools extends JavaPlugin {
+public final class MaxEvo extends JavaPlugin {
 
     private static final int BSTATS_PLUGIN_ID = 31238;
     private static final long UPDATE_CHECK_INTERVAL_TICKS = 20L * 60L * 60L * 5L;
     private static final String IMPORTANT_FILE_NAME = "IMPORTANT.txt";
-    public static final String UPDATE_DOWNLOAD_URL = "https://modrinth.com/plugin/maxtools";
+    public static final String UPDATE_DOWNLOAD_URL = "https://modrinth.com/plugin/maxevo";
 
     private MainConfigManager mainConfigManager;
     private ToolEvolutionManager toolEvolutionManager;
@@ -61,12 +61,12 @@ public final class MaxTools extends JavaPlugin {
         recreateDiscordWebhookNotifier();
 
         MainCommand mainCommand = new MainCommand(this);
-        PluginCommand maxToolsCommand = getCommand("maxtools");
+        PluginCommand maxToolsCommand = getCommand("maxevo");
         if (maxToolsCommand != null) {
             maxToolsCommand.setExecutor(mainCommand);
             maxToolsCommand.setTabCompleter(mainCommand);
         } else {
-            getLogger().severe("Command maxtools is not defined in plugin.yml");
+            getLogger().severe("Command maxevo is not defined in plugin.yml");
         }
 
         getServer().getPluginManager()
@@ -78,21 +78,21 @@ public final class MaxTools extends JavaPlugin {
         startPlacedBlockAutosave();
 
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&9&lMaxTools &8» &9   _____                ___________           .__          "));
+                "&9&lMaxEvo &8» &9   _____                ___________           .__          "));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&9&lMaxTools &8» &9  /     \\ _____  ___  __\\__    ___/___   ____ |  |   ______"));
+                "&9&lMaxEvo &8» &9  /     \\ _____  ___  __\\__    ___/___   ____ |  |   ______"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&9&lMaxTools &8» &9 /  \\ /  \\\\__  \\ \\  \\/  / |    | /  _ \\ /  _ \\|  |  /  ___/"));
+                "&9&lMaxEvo &8» &9 /  \\ /  \\\\__  \\ \\  \\/  / |    | /  _ \\ /  _ \\|  |  /  ___/"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&9&lMaxTools &8» &9/    Y    \\/ __ \\_>    <  |    |(  <_> |  <_> )  |__\\___ \\ "));
+                "&9&lMaxEvo &8» &9/    Y    \\/ __ \\_>    <  |    |(  <_> |  <_> )  |__\\___ \\ "));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&9&lMaxTools &8» &9\\____|__  (____  /__/\\_ \\ |____| \\____/ \\____/|____/____  >"));
+                "&9&lMaxEvo &8» &9\\____|__  (____  /__/\\_ \\ |____| \\____/ \\____/|____/____  >"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                "&9&lMaxTools &8» &9        \\/     \\/      \\/                               \\/ "));
+                "&9&lMaxEvo &8» &9        \\/     \\/      \\/                               \\/ "));
 
         Bukkit.getConsoleSender()
                 .sendMessage(
-                        MessageUtils.getColoredMessage("&9&lMaxTools &8» &9The plugin has been enabled!"));
+                        MessageUtils.getColoredMessage("&9&lMaxEvo &8» &9The plugin has been enabled!"));
 
         startUpdateChecks();
     }
@@ -180,17 +180,17 @@ public final class MaxTools extends JavaPlugin {
             if (this.getPluginMeta().getVersion().equalsIgnoreCase(version)) {
                 this.latestVersion = null;
                 Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(
-                        "&9&lMaxTools &8» &aA check for updates was performed and nothing was found."));
+                        "&9&lMaxEvo &8» &aA check for updates was performed and nothing was found."));
             } else {
                 this.latestVersion = version;
 
                 Bukkit.getConsoleSender()
                         .sendMessage(MessageUtils
-                                .getColoredMessage("&9&lMaxTools &8» &f&lNEW VERSION &7" + version));
+                                .getColoredMessage("&9&lMaxEvo &8» &f&lNEW VERSION &7" + version));
                 Bukkit.getConsoleSender().sendMessage(
                         MessageUtils
                                 .getColoredMessage(
-                                        "&9&lMaxTools &8» &fDownload it now at the following link: &7"
+                                        "&9&lMaxEvo &8» &fDownload it now at the following link: &7"
                                                 + UPDATE_DOWNLOAD_URL));
             }
         });

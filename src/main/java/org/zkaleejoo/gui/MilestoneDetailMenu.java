@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataType;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.config.MainConfigManager;
 import org.zkaleejoo.evolution.EvolutionMilestone;
 import org.zkaleejoo.evolution.ToolEvolutionManager;
@@ -21,10 +21,10 @@ import org.zkaleejoo.utils.MetKeys;
 public class MilestoneDetailMenu {
 
     private static final String BASE_PATH = "menu-layouts.milestone-detail";
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final ToolEvolutionManager evolutionManager;
 
-    public MilestoneDetailMenu(MaxTools plugin, ToolEvolutionManager evolutionManager) {
+    public MilestoneDetailMenu(MaxEvo plugin, ToolEvolutionManager evolutionManager) {
         this.plugin = plugin;
         this.evolutionManager = evolutionManager;
     }
@@ -121,7 +121,7 @@ public class MilestoneDetailMenu {
         String reward = (enchantName == null || enchantName.isBlank()) ? "-" : enchantName + " " + milestone.level();
         String abilities = milestone.unlockAbilities().isEmpty() ? "-" : String.join(", ", milestone.unlockAbilities());
         return input
-                .replace("{blocks}", String.valueOf(milestone.blocksRequired()))
+                .replace("{blocks}", String.valueOf(milestone.requiredCount()))
                 .replace("{reward}", reward)
                 .replace("{abilities}", abilities)
                 .replace("{enchantment}", enchantName == null ? "-" : enchantName)

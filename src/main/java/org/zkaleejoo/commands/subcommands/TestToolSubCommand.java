@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.evolution.EvolutionMilestone;
 import org.zkaleejoo.evolution.SpecialAbilityConfig;
 import org.zkaleejoo.evolution.ToolEvolutionManager;
@@ -27,9 +27,9 @@ public class TestToolSubCommand implements SubCommand {
 
     private static final Set<String> SUPPORTED_SUFFIXES = Set.of("_PICKAXE", "_AXE", "_SHOVEL");
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public TestToolSubCommand(MaxTools plugin) {
+    public TestToolSubCommand(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -45,7 +45,7 @@ public class TestToolSubCommand implements SubCommand {
 
     @Override
     public String getPermission() {
-        return "maxtools.admin.testtool";
+        return "maxevo.admin.testtool";
     }
 
     @Override
@@ -280,7 +280,7 @@ public class TestToolSubCommand implements SubCommand {
 
         int lastAppliedMilestone = 0;
         for (EvolutionMilestone milestone : evolutionManager.getReachedMilestones(safeUsage)) {
-            lastAppliedMilestone = Math.max(lastAppliedMilestone, milestone.blocksRequired());
+            lastAppliedMilestone = Math.max(lastAppliedMilestone, milestone.requiredCount());
         }
         container.set(lastAppliedMilestoneKey, PersistentDataType.INTEGER, lastAppliedMilestone);
         container.set(totalAbilityActivationsKey, PersistentDataType.INTEGER, 0);

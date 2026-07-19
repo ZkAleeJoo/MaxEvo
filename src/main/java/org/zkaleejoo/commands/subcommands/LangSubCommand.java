@@ -4,14 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.utils.MessageUtils;
 
 public class LangSubCommand implements SubCommand {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public LangSubCommand(MaxTools plugin) {
+    public LangSubCommand(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -22,7 +22,7 @@ public class LangSubCommand implements SubCommand {
 
     @Override
     public String getPermission() {
-        return "maxtools.admin.lang";
+        return "maxevo.admin.lang";
     }
 
     @Override

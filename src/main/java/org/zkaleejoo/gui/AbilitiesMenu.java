@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataType;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.config.MainConfigManager;
 import org.zkaleejoo.evolution.AbilityStatus;
 import org.zkaleejoo.evolution.ToolEvolutionManager;
@@ -22,10 +22,10 @@ import org.zkaleejoo.utils.MetKeys;
 public class AbilitiesMenu {
     private static final String BASE_PATH = "menu-layouts.abilities";
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final ToolEvolutionManager evolutionManager;
 
-    public AbilitiesMenu(MaxTools plugin, ToolEvolutionManager evolutionManager) {
+    public AbilitiesMenu(MaxEvo plugin, ToolEvolutionManager evolutionManager) {
         this.plugin = plugin;
         this.evolutionManager = evolutionManager;
     }

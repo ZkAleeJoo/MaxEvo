@@ -6,19 +6,19 @@ import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 
 public class PlayerPlacedBlockTracker {
 
     private static final String FILE_NAME = "player-placed-blocks.yml";
     private static final String BLOCKS_PATH = "blocks";
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final File file;
     private final Set<String> placedBlocks = new HashSet<>();
     private boolean dirty;
 
-    public PlayerPlacedBlockTracker(MaxTools plugin) {
+    public PlayerPlacedBlockTracker(MaxEvo plugin) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), FILE_NAME);
         load();

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.zkaleejoo</groupId>
-    <artifactId>MaxTools</artifactId>
+    <artifactId>MaxEvo</artifactId>
     <version>1.0.7</version>
 
     <properties>
@@ -52,7 +52,7 @@
     </dependencies>
 
     <build>
-        <finalName>MaxTools-${project.version}</finalName>
+        <finalName>MaxEvo-${project.version}</finalName>
 
         <resources>
             <resource>

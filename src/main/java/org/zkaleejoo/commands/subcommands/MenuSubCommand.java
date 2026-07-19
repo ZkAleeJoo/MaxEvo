@@ -4,14 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.utils.MessageUtils;
 
 public class MenuSubCommand implements SubCommand {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public MenuSubCommand(MaxTools plugin) {
+    public MenuSubCommand(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -27,7 +27,7 @@ public class MenuSubCommand implements SubCommand {
 
     @Override
     public String getPermission() {
-        return "maxtools.menu";
+        return "maxevo.menu";
     }
 
     @Override

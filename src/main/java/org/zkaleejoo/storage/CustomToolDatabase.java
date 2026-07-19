@@ -9,15 +9,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 import org.bukkit.Material;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 
 public class CustomToolDatabase implements AutoCloseable {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private Connection connection;
     private long lastPurgeAt;
 
-    public CustomToolDatabase(MaxTools plugin) {
+    public CustomToolDatabase(MaxEvo plugin) {
         this.plugin = plugin;
     }
 

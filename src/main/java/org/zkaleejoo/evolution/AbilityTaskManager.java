@@ -8,16 +8,16 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitTask;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.evolution.abilities.TickAbilityContext;
 
 public class AbilityTaskManager {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final ToolEvolutionManager evolutionManager;
     private BukkitTask hasteTask;
 
-    public AbilityTaskManager(MaxTools plugin, ToolEvolutionManager evolutionManager) {
+    public AbilityTaskManager(MaxEvo plugin, ToolEvolutionManager evolutionManager) {
         this.plugin = plugin;
         this.evolutionManager = evolutionManager;
     }

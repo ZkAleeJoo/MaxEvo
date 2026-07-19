@@ -8,16 +8,16 @@
 # Si tienes alguna pregunta o problema, puedes consultar en el servidor de soporte: https://discord.gg/Vr46JHm2kd
 # Recuerda no borrar ninguna línea de código.
 # Para problemas, errores, ideas o sugerencias, puedes comunicarte en el servidor de Discord.
-# Esta plantilla interna se copia a /plugins/MaxTools/language_profiles/config_es.yml si el perfil no existe.
+# Esta plantilla interna se copia a /plugins/MaxEvo/language_profiles/config_es.yml si el perfil no existe.
 # Edita language_profiles/config_es.yml para personalizar la configuración en español.
 general:
   language: es
   # Cuando es verdadero, cambiar el idioma desde /met lang intercambia config.yml + menus.yml según el perfil de idioma.
-  # Los perfiles editables por admins están en /plugins/MaxTools/language_profiles/.
+  # Los perfiles editables por admins están en /plugins/MaxEvo/language_profiles/.
   # Si un perfil aún no existe, el plugin lo crea desde la plantilla interna incluida.
   # Edita language_profiles/config_es.yml y language_profiles/menus_es.yml para personalizaciones en español.
   language-profile-sync: true
-  prefix: '&#222DF5&lMaxTools &8» '
+  prefix: '&#222DF5&lMaxEvo &8» '
   # Modo de salida predeterminado para /met toolinfo:
   # false = chat de texto heredado, true = interfaz gráfica (igual que /met toolinfo gui).
   # Los jugadores aún pueden forzar el modo por uso con /met toolinfo <gui|text>.
@@ -30,10 +30,10 @@ discord:
   webhook-url: ''
   # Nombre visible usado por el placeholder {server} en los mensajes webhook.
   # Cambialo para evitar mostrar el nombre del software del servidor (por ejemplo: Paper).
-  server-name: 'MaxTools'
+  server-name: 'MaxEvo'
   # Anulación opcional de la identidad del webhook.
   # Déjelo en blanco para usar el nombre/avatar predeterminado del webhook de Discord.
-  username: 'MaxTools'
+  username: 'MaxEvo'
   avatar-url: ''
   allowed-mentions:
     # Vacio = no hacer ping a @everyone, roles o usuarios desde las templates.
@@ -97,7 +97,7 @@ discord:
       thumbnail-url: 'https://mc-heads.net/avatar/{player}/128'
       image-url: ''
       footer:
-        text: 'MaxTools Evolution'
+        text: 'MaxEvo Evolution'
         icon-url: ''
       fields:
         - name: 'Habilidad'

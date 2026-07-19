@@ -11,5 +11,6 @@ public enum AbilityType {
     HASTE,
     MOMENTUM,
     LUCK_SURGE,
-    SATURATION_PULSE
+    SATURATION_PULSE,
+    LIFESTEAL
 }

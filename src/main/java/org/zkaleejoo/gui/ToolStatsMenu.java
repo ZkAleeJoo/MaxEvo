@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataType;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.config.MainConfigManager;
 import org.zkaleejoo.evolution.ToolEvolutionManager;
 import org.zkaleejoo.evolution.ToolEvolutionManager.ToolDerivedStats;
@@ -24,10 +24,10 @@ public class ToolStatsMenu {
 
     private static final String BASE_PATH = "menu-layouts.tool-stats";
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final ToolEvolutionManager evolutionManager;
 
-    public ToolStatsMenu(MaxTools plugin, ToolEvolutionManager evolutionManager) {
+    public ToolStatsMenu(MaxEvo plugin, ToolEvolutionManager evolutionManager) {
         this.plugin = plugin;
         this.evolutionManager = evolutionManager;
     }
@@ -241,7 +241,7 @@ public class ToolStatsMenu {
 
     private String resolveNextReward(Material toolType, int usage) {
         return evolutionManager.getMilestones(toolType).stream()
-                .filter(milestone -> usage < milestone.blocksRequired())
+                .filter(milestone -> usage < milestone.requiredCount())
                 .findFirst()
                 .map(milestone -> {
                     String enchantName = evolutionManager.getDisplayEnchantmentName(milestone.enchantment());

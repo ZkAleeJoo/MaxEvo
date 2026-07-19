@@ -1,13 +1,13 @@
-name: MaxTools
+name: MaxEvo
 version: ${project.version}
-main: org.zkaleejoo.MaxTools
+main: org.zkaleejoo.MaxEvo
 api-version: '1.21'
 authors: [ ZkAleeJoo ]
 description: Your tools will evolve as you progress.
 
 commands:
-  maxtools:
-    description: Main MaxTools command
+  maxevo:
+    description: Main MaxEvo command
     aliases: [met]
     usage: |
       /met toolinfo [gui|text|legacy]
@@ -22,47 +22,47 @@ commands:
       /met sync
 
 permissions:
-  maxtools.admin:
-    description: Full access to MaxTools and administrative commands.
+  maxevo.admin:
+    description: Full access to MaxEvo and administrative commands.
     default: op
     children:
-      maxtools.toolinfo: true
-      maxtools.menu: true
-      maxtools.admin.reload: true
-      maxtools.admin.preview: true
-      maxtools.admin.discordtest: true
-      maxtools.admin.testtool: true
-      maxtools.admin.cleartesttool: true
-      maxtools.admin.admintoolsremove: true
-      maxtools.admin.lang: true
-      maxtools.admin.sync: true
-  maxtools.toolinfo:
+      maxevo.toolinfo: true
+      maxevo.menu: true
+      maxevo.admin.reload: true
+      maxevo.admin.preview: true
+      maxevo.admin.discordtest: true
+      maxevo.admin.testtool: true
+      maxevo.admin.cleartesttool: true
+      maxevo.admin.admintoolsremove: true
+      maxevo.admin.lang: true
+      maxevo.admin.sync: true
+  maxevo.toolinfo:
     description: Allows players to check evolution progress of the held tool.
     default: true
-  maxtools.menu:
+  maxevo.menu:
     description: Allows players to open the main evolution menu with /met menu, /met hub, or /met gui.
     default: true
-  maxtools.admin.reload:
-    description: Allows administrators to reload MaxTools configuration, menus, language files, evolution data, and Discord webhook settings.
+  maxevo.admin.reload:
+    description: Allows administrators to reload MaxEvo configuration, menus, language files, evolution data, and Discord webhook settings.
     default: op
-  maxtools.admin.preview:
+  maxevo.admin.preview:
     description: Allows administrators to open the evolution preview menu with /met preview or /met adminpreview.
     default: op
-  maxtools.admin.discordtest:
+  maxevo.admin.discordtest:
     description: Allows administrators to send a Discord webhook test message with /met discordtest or /met dctest.
     default: op
-  maxtools.admin.testtool:
+  maxevo.admin.testtool:
     description: Allows administrators to generate a test tracked tool with /met testtool or /met testtools.
     default: op
-  maxtools.admin.cleartesttool:
+  maxevo.admin.cleartesttool:
     description: Allows administrators to destroy held test tools or remove registered test tool IDs with /met cleartesttool and aliases.
     default: op
-  maxtools.admin.admintoolsremove:
-    description: Allows administrators to purge all MaxTools custom tools from loaded inventories and clear the custom tool registry.
+  maxevo.admin.admintoolsremove:
+    description: Allows administrators to purge all MaxEvo custom tools from loaded inventories and clear the custom tool registry.
     default: op
-  maxtools.admin.lang:
+  maxevo.admin.lang:
     description: Allows administrators to open the language selector with /met lang.
     default: op
-  maxtools.admin.sync:
+  maxevo.admin.sync:
     description: Allows administrators to synchronize the held tool with the current evolution.yml milestones.
     default: op

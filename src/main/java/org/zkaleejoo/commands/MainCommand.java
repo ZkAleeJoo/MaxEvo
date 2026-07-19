@@ -8,7 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.utils.MessageUtils;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -27,10 +27,10 @@ import org.zkaleejoo.commands.subcommands.SyncSubCommand;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final Map<String, SubCommand> subCommands = new LinkedHashMap<>();
 
-    public MainCommand(MaxTools plugin) {
+    public MainCommand(MaxEvo plugin) {
         this.plugin = plugin;
         registerSubCommand(new ReloadSubCommand(plugin));
         registerSubCommand(new ToolInfoSubCommand(plugin));

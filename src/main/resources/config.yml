@@ -11,11 +11,11 @@
 general:
   language: en
   # When true, changing language from /met lang swaps config.yml + menus.yml by language profile.
-  # Admin-editable profiles live in /plugins/MaxTools/language_profiles/.
+  # Admin-editable profiles live in /plugins/MaxEvo/language_profiles/.
   # If a profile does not exist yet, the plugin seeds it from the bundled internal template.
   # Edit language_profiles/config_es.yml and language_profiles/menus_es.yml for Spanish customizations.
   language-profile-sync: true
-  prefix: '&#222DF5&lMaxTools &8» '
+  prefix: '&#222DF5&lMaxEvo &8» '
   # Default output mode for /met toolinfo:
   # false = legacy text chat, true = GUI (same as /met toolinfo gui).
   # Players can still force mode per-use with /met toolinfo <gui|text>.
@@ -28,10 +28,10 @@ discord:
   webhook-url: ''
   # Display name used by the {server} placeholder in webhook messages.
   # Change this to avoid showing the server software name (for example: Paper).
-  server-name: 'MaxTools'
+  server-name: 'MaxEvo'
   # Optional webhook identity override.
   # Leave empty to use the Discord webhook default name/avatar.
-  username: 'MaxTools'
+  username: 'MaxEvo'
   avatar-url: ''
   allowed-mentions:
     # Empty = do not ping @everyone, roles or users from configured templates.
@@ -95,7 +95,7 @@ discord:
       thumbnail-url: 'https://mc-heads.net/avatar/{player}/128'
       image-url: ''
       footer:
-        text: 'MaxTools Evolution'
+        text: 'MaxEvo Evolution'
         icon-url: ''
       fields:
         - name: 'Ability'

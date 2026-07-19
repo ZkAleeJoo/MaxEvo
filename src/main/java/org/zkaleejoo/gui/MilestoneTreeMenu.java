@@ -14,7 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.config.MainConfigManager;
 import org.zkaleejoo.evolution.EvolutionMilestone;
 import org.zkaleejoo.evolution.ToolEvolutionManager;
@@ -25,10 +25,10 @@ public class MilestoneTreeMenu {
 
     private static final String BASE_PATH = "menu-layouts.milestone-tree";
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final ToolEvolutionManager evolutionManager;
 
-    public MilestoneTreeMenu(MaxTools plugin, ToolEvolutionManager evolutionManager) {
+    public MilestoneTreeMenu(MaxEvo plugin, ToolEvolutionManager evolutionManager) {
         this.plugin = plugin;
         this.evolutionManager = evolutionManager;
     }
@@ -41,7 +41,7 @@ public class MilestoneTreeMenu {
         int size = config.getGuiInventorySize(BASE_PATH + ".size", 54);
 
         List<EvolutionMilestone> milestones = evolutionManager.getMilestones(session.getToolType()).stream()
-                .sorted(Comparator.comparingInt(m -> m.blocksRequired()))
+                .sorted(Comparator.comparingInt(m -> m.requiredCount()))
                 .toList();
 
         int totalPages = Math.max(1, (int) Math.ceil(milestones.size() / (double) Math.max(1, milestoneSlots.size())));
@@ -73,7 +73,7 @@ public class MilestoneTreeMenu {
             int slot = milestoneSlots.get(i);
             inventory.setItem(slot,
                     buildMilestoneItem(config, milestone, session.getToolType(), session.getUsage(), tier));
-            slotMapping.put(slot, milestone.blocksRequired());
+            slotMapping.put(slot, milestone.requiredCount());
         }
         session.setSlotMilestoneIds(slotMapping);
 
@@ -83,11 +83,11 @@ public class MilestoneTreeMenu {
 
     private ItemStack buildMilestoneItem(MainConfigManager config, EvolutionMilestone milestone,
             Material sessionToolType, int usage, String currentTier) {
-        String state = usage >= milestone.blocksRequired() ? "unlocked"
-                : (milestone.blocksRequired() == evolutionManager.getCurrentTarget(sessionToolType, usage) ? "current"
+        String state = usage >= milestone.requiredCount() ? "unlocked"
+                : (milestone.requiredCount() == evolutionManager.getCurrentTarget(sessionToolType, usage) ? "current"
                         : "locked");
-        int progressPercent = resolveProgressPercent(usage, milestone.blocksRequired());
-        String milestoneTier = evolutionManager.getTierNameForUsage(sessionToolType, milestone.blocksRequired());
+        int progressPercent = resolveProgressPercent(usage, milestone.requiredCount());
+        String milestoneTier = evolutionManager.getTierNameForUsage(sessionToolType, milestone.requiredCount());
 
         String itemPath = BASE_PATH + ".items." + state;
         ItemVisual visual = resolveItemVisual(config, itemPath, state, milestoneTier, progressPercent, Material.PAPER,
@@ -232,10 +232,10 @@ public class MilestoneTreeMenu {
         String reward = enchantName == null || enchantName.isBlank()
                 ? "-"
                 : enchantName + " " + milestone.level();
-        int remainingBlocks = Math.max(0, milestone.blocksRequired() - usage);
+        int remainingBlocks = Math.max(0, milestone.requiredCount() - usage);
         String nextReward = resolveNextReward(toolType, usage);
         return input
-                .replace("{blocks}", String.valueOf(milestone.blocksRequired()))
+                .replace("{blocks}", String.valueOf(milestone.requiredCount()))
                 .replace("{reward}", reward)
                 .replace("{state}", state)
                 .replace("{usage}", String.valueOf(usage))
@@ -246,8 +246,8 @@ public class MilestoneTreeMenu {
 
     private String resolveNextReward(Material toolType, int usage) {
         EvolutionMilestone targetMilestone = evolutionManager.getMilestones(toolType).stream()
-                .filter(milestone -> usage < milestone.blocksRequired())
-                .min(Comparator.comparingInt(m -> m.blocksRequired()))
+                .filter(milestone -> usage < milestone.requiredCount())
+                .min(Comparator.comparingInt(m -> m.requiredCount()))
                 .orElse(null);
         if (targetMilestone == null) {
             return "-";

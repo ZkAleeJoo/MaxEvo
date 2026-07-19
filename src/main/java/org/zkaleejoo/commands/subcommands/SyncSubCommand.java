@@ -6,15 +6,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.evolution.EvolutionSyncResult;
 import org.zkaleejoo.utils.MessageUtils;
 
 public class SyncSubCommand implements SubCommand {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public SyncSubCommand(MaxTools plugin) {
+    public SyncSubCommand(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -25,7 +25,7 @@ public class SyncSubCommand implements SubCommand {
 
     @Override
     public String getPermission() {
-        return "maxtools.admin.sync";
+        return "maxevo.admin.sync";
     }
 
     @Override

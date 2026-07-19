@@ -11,12 +11,16 @@ import java.util.stream.Collectors;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-final class MilestoneConfigParser {
+public final class MilestoneConfigParser {
 
     private MilestoneConfigParser() {
     }
 
-    static List<EvolutionMilestone> parse(FileConfiguration config, String path, Consumer<String> warningSink) {
+    /**
+     * Parses milestones from a per-category tool config file.
+     * Each milestone must have an 'action' (blocks-broken, mobs-killed, etc.) and a 'count'.
+     */
+    public static List<EvolutionMilestone> parse(FileConfiguration config, String path, Consumer<String> warningSink) {
         ConfigurationSection section = config.getConfigurationSection(path);
         if (section == null) {
             return Collections.emptyList();
@@ -26,14 +30,31 @@ final class MilestoneConfigParser {
 
         for (String key : section.getKeys(false)) {
             String milestonePath = path + "." + key;
-            if (!isExplicitlySet(config, milestonePath + ".blocks")) {
+
+            // The new format uses 'count', but we still support legacy 'blocks' for migration
+            boolean hasCount = isExplicitlySet(config, milestonePath + ".count");
+            boolean hasLegacyBlocks = isExplicitlySet(config, milestonePath + ".blocks");
+
+            if (!hasCount && !hasLegacyBlocks) {
                 continue;
             }
 
-            int blocks = config.getInt(milestonePath + ".blocks", -1);
-            if (blocks <= 0) {
-                warningSink.accept("Invalid milestone blocks value in key " + milestonePath);
+            int count = hasCount
+                    ? config.getInt(milestonePath + ".count", -1)
+                    : config.getInt(milestonePath + ".blocks", -1);
+
+            if (count <= 0) {
+                warningSink.accept("Invalid milestone count value in key " + milestonePath);
                 continue;
+            }
+
+            // Parse the action type; default to BLOCKS_BROKEN for backward compatibility
+            String actionStr = getExplicitString(config, milestonePath + ".action", "blocks-broken");
+            ProgressType progressType = ProgressType.fromConfigKey(actionStr);
+            if (progressType == null) {
+                warningSink.accept("Unknown action type '" + actionStr + "' in milestone " + milestonePath
+                        + ". Defaulting to blocks-broken.");
+                progressType = ProgressType.BLOCKS_BROKEN;
             }
 
             String enchantment = getExplicitString(config, milestonePath + ".enchantment", "");
@@ -44,10 +65,11 @@ final class MilestoneConfigParser {
                 unlockAbilities = List.of("self-repair");
             }
 
-            parsed.add(new EvolutionMilestone(blocks, enchantment, level, normalizeAbilityIds(unlockAbilities)));
+            parsed.add(new EvolutionMilestone(count, progressType, enchantment, level,
+                    normalizeAbilityIds(unlockAbilities)));
         }
 
-        parsed.sort(Comparator.comparingInt(m -> m.blocksRequired()));
+        parsed.sort(Comparator.comparingInt(m -> m.requiredCount()));
         return parsed;
     }
 

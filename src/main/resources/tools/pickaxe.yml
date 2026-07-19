@@ -1,0 +1,36 @@
+# MaxEvo Pickaxe Configuration
+counting:
+  require-preferred-tool: true
+  strict-tool-category-match: true
+  whitelist-materials: []
+  blacklist-materials: []
+
+progress-display:
+  enabled: true
+  format: "&8■ &#FFD700{current} &8/ &#FFAA00{target} &7{unit} &8■"
+  completed-format: "&8■ &#55FF55&lMAXED &8■"
+  refresh-base-name-on-rename: false
+
+milestones:
+  milestone-1:
+    type: BLOCKS_BROKEN
+    count: 100
+    enchantment: EFFICIENCY
+    level: 3
+  milestone-2:
+    type: BLOCKS_BROKEN
+    count: 300
+    unlock-abilities:
+      - self-repair
+
+special-abilities:
+  self-repair:
+    type: SELF_REPAIR
+    enabled: true
+    trigger: WALK_DISTANCE
+    chance: 1.0
+    amount: 10
+    distance-blocks: 10
+    cooldown-seconds: 10
+    require-main-hand: true
+    compatible-with-mending: true

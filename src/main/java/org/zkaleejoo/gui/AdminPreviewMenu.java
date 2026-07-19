@@ -9,7 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.config.MainConfigManager;
 import org.zkaleejoo.evolution.ToolEvolutionManager;
 import org.zkaleejoo.utils.MessageUtils;
@@ -18,10 +18,10 @@ import org.zkaleejoo.utils.MetKeys;
 public class AdminPreviewMenu {
 
     private static final String BASE_PATH = "menu-layouts.admin-preview";
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final ToolEvolutionManager evolutionManager;
 
-    public AdminPreviewMenu(MaxTools plugin, ToolEvolutionManager evolutionManager) {
+    public AdminPreviewMenu(MaxEvo plugin, ToolEvolutionManager evolutionManager) {
         this.plugin = plugin;
         this.evolutionManager = evolutionManager;
     }

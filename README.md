@@ -1,13 +1,13 @@
-# MaxTools
+# MaxEvo
 
-MaxTools is a tool evolution plugin for modern Paper servers. It tracks mining progress on configured tools, unlocks milestone rewards, applies special abilities, displays progression in item names and lore, provides GUI panels for players and administrators, and can announce important unlocks through Discord webhooks.
+MaxEvo is a tool evolution plugin for modern Paper servers. It tracks mining progress on configured tools, unlocks milestone rewards, applies special abilities, displays progression in item names and lore, provides GUI panels for players and administrators, and can announce important unlocks through Discord webhooks.
 
 ## Main Features
 
 - Tool evolution based on mined block progress.
 - Configurable tracked tools, milestones, enchantment rewards, and special abilities.
 - Persistent tool data stored on the item through Bukkit persistent data.
-- SQLite registry for custom MaxTools tools, including administrative purge support.
+- SQLite registry for custom MaxEvo tools, including administrative purge support.
 - Automatic sync for older or outdated evolved tools when players join or use `/met sync`.
 - Progress display in the tool name with configurable formats.
 - Managed evolution lore with tiers, progress bars, abilities, cooldowns, and enchantment lines.
@@ -20,21 +20,21 @@ MaxTools is a tool evolution plugin for modern Paper servers. It tracks mining p
 
 ## Compatibility
 
-- Main plugin class: `org.zkaleejoo.MaxTools`
+- Main plugin class: `org.zkaleejoo.MaxEvo`
 - Bukkit API version declared by the plugin: `1.21`
-- Root command: `/maxtools`
+- Root command: `/maxevo`
 - Command alias: `/met`
 - Runtime libraries shaded into the plugin include bStats and SQLite JDBC.
 
 ## How Tool Evolution Works
 
-MaxTools only tracks materials listed under `tracked-tools` in `evolution.yml`. By default, pickaxes, axes, and shovels from wood through netherite are tracked.
+MaxEvo only tracks materials listed under `tracked-tools` in `evolution.yml`. By default, pickaxes, axes, and shovels from wood through netherite are tracked.
 
 When a player breaks a valid block with a tracked tool:
 
 1. The plugin checks that the item is a valid tracked tool.
 2. The plugin checks that the block should count according to `counting`.
-3. The tool is registered as a MaxTools custom tool if it does not already have a custom tool id.
+3. The tool is registered as a MaxEvo custom tool if it does not already have a custom tool id.
 4. The mined block counter increases, up to the highest configured milestone.
 5. The display name and managed lore are refreshed.
 6. Newly reached milestones are applied.
@@ -189,36 +189,36 @@ Menu settings include titles, inventory sizes, slots, materials, custom model da
 
 ## Commands
 
-All commands use `/maxtools` or `/met`.
+All commands use `/maxevo` or `/met`.
 
 | Command | Aliases | Permission | Sender | Description |
 | --- | --- | --- | --- | --- |
-| `/met toolinfo [gui|text|legacy]` | none | `maxtools.toolinfo` | Player | Shows progress for the held tracked tool. GUI mode opens the evolution hub; text mode sends a chat summary. |
-| `/met menu` | `/met hub`, `/met gui` | `maxtools.menu` | Player | Opens the evolution GUI hub for the held tracked tool. |
-| `/met reload` | none | `maxtools.admin.reload` | Any | Reloads config, menus, language files, evolution data, Discord webhook state, update checks, and bStats state. |
-| `/met preview` | `/met adminpreview` | `maxtools.admin.preview` | Player | Opens the admin preview GUI. |
-| `/met discordtest` | `/met dctest` | `maxtools.admin.discordtest` | Any | Queues a Discord webhook test message. |
-| `/met testtool <material> [ability|all] [level]` | `/met testtools` | `maxtools.admin.testtool` | Player | Creates a registered test tool with optional ability unlocks and block progress. |
-| `/met cleartesttool [id]` | `/met cleartest`, `/met untesttool`, `/met cleartestool`, `/met cleartestools` | `maxtools.admin.cleartesttool` | Player | Removes a held test tool or removes a registered test tool id. |
-| `/met admintoolsremove confirm` | `/met adminremove`, `/met purgetools`, `/met toolspurge` | `maxtools.admin.admintoolsremove` | Any | Removes MaxTools custom tools from loaded inventories/entities and clears the SQLite custom tool registry. |
-| `/met lang` | none | `maxtools.admin.lang` | Player | Opens the language selector GUI. |
-| `/met sync` | none | `maxtools.admin.sync` | Player | Synchronizes the held evolved tool with the current `evolution.yml` milestones and abilities. |
+| `/met toolinfo [gui|text|legacy]` | none | `maxevo.toolinfo` | Player | Shows progress for the held tracked tool. GUI mode opens the evolution hub; text mode sends a chat summary. |
+| `/met menu` | `/met hub`, `/met gui` | `maxevo.menu` | Player | Opens the evolution GUI hub for the held tracked tool. |
+| `/met reload` | none | `maxevo.admin.reload` | Any | Reloads config, menus, language files, evolution data, Discord webhook state, update checks, and bStats state. |
+| `/met preview` | `/met adminpreview` | `maxevo.admin.preview` | Player | Opens the admin preview GUI. |
+| `/met discordtest` | `/met dctest` | `maxevo.admin.discordtest` | Any | Queues a Discord webhook test message. |
+| `/met testtool <material> [ability|all] [level]` | `/met testtools` | `maxevo.admin.testtool` | Player | Creates a registered test tool with optional ability unlocks and block progress. |
+| `/met cleartesttool [id]` | `/met cleartest`, `/met untesttool`, `/met cleartestool`, `/met cleartestools` | `maxevo.admin.cleartesttool` | Player | Removes a held test tool or removes a registered test tool id. |
+| `/met admintoolsremove confirm` | `/met adminremove`, `/met purgetools`, `/met toolspurge` | `maxevo.admin.admintoolsremove` | Any | Removes MaxEvo custom tools from loaded inventories/entities and clears the SQLite custom tool registry. |
+| `/met lang` | none | `maxevo.admin.lang` | Player | Opens the language selector GUI. |
+| `/met sync` | none | `maxevo.admin.sync` | Player | Synchronizes the held evolved tool with the current `evolution.yml` milestones and abilities. |
 
 ## Permissions
 
 | Permission | Default | Description |
 | --- | --- | --- |
-| `maxtools.admin` | `op` | Full access to MaxTools administrative commands and child permissions. |
-| `maxtools.toolinfo` | `true` | Allows players to use `/met toolinfo`. |
-| `maxtools.menu` | `true` | Allows players to open `/met menu`, `/met hub`, or `/met gui`. |
-| `maxtools.admin.reload` | `op` | Allows `/met reload`. |
-| `maxtools.admin.preview` | `op` | Allows `/met preview` and `/met adminpreview`. |
-| `maxtools.admin.discordtest` | `op` | Allows `/met discordtest` and `/met dctest`. |
-| `maxtools.admin.testtool` | `op` | Allows `/met testtool` and `/met testtools`. |
-| `maxtools.admin.cleartesttool` | `op` | Allows `/met cleartesttool` and its aliases. |
-| `maxtools.admin.admintoolsremove` | `op` | Allows `/met admintoolsremove confirm` and its aliases. |
-| `maxtools.admin.lang` | `op` | Allows `/met lang`. |
-| `maxtools.admin.sync` | `op` | Allows `/met sync`. |
+| `maxevo.admin` | `op` | Full access to MaxEvo administrative commands and child permissions. |
+| `maxevo.toolinfo` | `true` | Allows players to use `/met toolinfo`. |
+| `maxevo.menu` | `true` | Allows players to open `/met menu`, `/met hub`, or `/met gui`. |
+| `maxevo.admin.reload` | `op` | Allows `/met reload`. |
+| `maxevo.admin.preview` | `op` | Allows `/met preview` and `/met adminpreview`. |
+| `maxevo.admin.discordtest` | `op` | Allows `/met discordtest` and `/met dctest`. |
+| `maxevo.admin.testtool` | `op` | Allows `/met testtool` and `/met testtools`. |
+| `maxevo.admin.cleartesttool` | `op` | Allows `/met cleartesttool` and its aliases. |
+| `maxevo.admin.admintoolsremove` | `op` | Allows `/met admintoolsremove confirm` and its aliases. |
+| `maxevo.admin.lang` | `op` | Allows `/met lang`. |
+| `maxevo.admin.sync` | `op` | Allows `/met sync`. |
 
 ## Discord Webhooks
 
@@ -264,10 +264,10 @@ Bundled language files:
 
 When `general.language-profile-sync` is `true`, changing language from `/met lang` also swaps active `config.yml` and `menus.yml` from language profiles under:
 
-- `plugins/MaxTools/language_profiles/config_en.yml`
-- `plugins/MaxTools/language_profiles/menus_en.yml`
-- `plugins/MaxTools/language_profiles/config_es.yml`
-- `plugins/MaxTools/language_profiles/menus_es.yml`
+- `plugins/MaxEvo/language_profiles/config_en.yml`
+- `plugins/MaxEvo/language_profiles/menus_en.yml`
+- `plugins/MaxEvo/language_profiles/config_es.yml`
+- `plugins/MaxEvo/language_profiles/menus_es.yml`
 
 Before switching, the plugin snapshots the current language profile so custom edits are preserved per language.
 
@@ -357,7 +357,7 @@ Admin preview placeholders:
 
 ## Internal Item Data
 
-MaxTools stores evolution state on items through persistent data keys. Important state includes:
+MaxEvo stores evolution state on items through persistent data keys. Important state includes:
 
 - `blocks_mined`
 - `special_unlocked`
@@ -381,7 +381,7 @@ These keys let the plugin keep progress, cooldowns, ability statistics, lore own
 
 ## SQLite Custom Tool Registry
 
-The plugin creates `custom_tools.db` inside the MaxTools data folder.
+The plugin creates `custom_tools.db` inside the MaxEvo data folder.
 
 It stores:
 
@@ -393,13 +393,13 @@ It stores:
 - Created timestamp.
 - Last seen timestamp.
 
-This registry helps identify valid MaxTools custom tools and allows `/met admintoolsremove confirm` to revoke all registered tools.
+This registry helps identify valid MaxEvo custom tools and allows `/met admintoolsremove confirm` to revoke all registered tools.
 
 If a custom tool is no longer registered after a purge, the plugin removes it from loaded inventories, ender chests, opened inventories, dropped items, item frames, and nested container items when those locations are scanned.
 
 ## Update Checks and bStats
 
-`general.update-check` controls update checks. When enabled, the plugin checks for a newer version periodically and notifies the console. Operators with `maxtools.admin` can also receive update notices on join.
+`general.update-check` controls update checks. When enabled, the plugin checks for a newer version periodically and notifies the console. Operators with `maxevo.admin` can also receive update notices on join.
 
 `general.bstats` controls bStats metrics. Reloading the plugin state through `/met reload` also refreshes the bStats state.
 
@@ -412,13 +412,13 @@ If a custom tool is no longer registered after a purge, the plugin removes it fr
 | `menus.yml` | GUI titles, layout, slots, materials, lore, sounds, colors, variants, and admin preview. |
 | `messages_en.yml` / `messages_es.yml` | Command messages, player feedback, tool names, and enchantment names. |
 | `language_profiles/*` | Runtime profile copies used by the language switcher. |
-| `custom_tools.db` | SQLite registry for MaxTools custom tools. |
+| `custom_tools.db` | SQLite registry for MaxEvo custom tools. |
 | `player-placed-blocks.yml` | Registry used to track player-placed blocks for counting protection. |
 
 ## Notes for Server Owners
 
-- Normal players only need `maxtools.toolinfo` and `maxtools.menu`, both enabled by default.
-- Administrative commands are protected with `maxtools.admin.*` permissions and default to operators.
+- Normal players only need `maxevo.toolinfo` and `maxevo.menu`, both enabled by default.
+- Administrative commands are protected with `maxevo.admin.*` permissions and default to operators.
 - Use `/met sync` after changing milestones if an existing held tool should be brought in line with the current `evolution.yml`.
 - Use `/met admintoolsremove confirm` carefully. It is intentionally destructive and removes registered custom tools from loaded server state and the database.
 - Keep ability material whitelists restrictive for powerful abilities such as `vein-miner`, `drill`, and `luck-surge`.

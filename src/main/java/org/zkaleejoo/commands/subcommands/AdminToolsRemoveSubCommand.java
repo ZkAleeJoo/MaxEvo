@@ -18,14 +18,14 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.utils.MessageUtils;
 
 public class AdminToolsRemoveSubCommand implements SubCommand {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public AdminToolsRemoveSubCommand(MaxTools plugin) {
+    public AdminToolsRemoveSubCommand(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -41,7 +41,7 @@ public class AdminToolsRemoveSubCommand implements SubCommand {
 
     @Override
     public String getPermission() {
-        return "maxtools.admin.admintoolsremove";
+        return "maxevo.admin.admintoolsremove";
     }
 
     @Override

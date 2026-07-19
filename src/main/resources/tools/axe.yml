@@ -1,0 +1,17 @@
+# MaxEvo Axe Configuration
+counting:
+  require-preferred-tool: true
+  strict-tool-category-match: true
+
+progress-display:
+  enabled: true
+  format: "&8■ &#FFD700{current} &8/ &#FFAA00{target} &7{unit} &8■"
+  completed-format: "&8■ &#55FF55&lMAXED &8■"
+  refresh-base-name-on-rename: false
+
+milestones:
+  milestone-1:
+    type: BLOCKS_BROKEN
+    count: 100
+    enchantment: EFFICIENCY
+    level: 2

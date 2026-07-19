@@ -2,7 +2,7 @@ package org.zkaleejoo.utils;
 
 import java.util.Locale;
 import org.bukkit.NamespacedKey;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 
 public final class MetKeys {
 
@@ -11,6 +11,11 @@ public final class MetKeys {
     public static final String MENU_OPEN_STATS = "menu_open_stats";
     public static final String MENU_NON_MOVABLE = "menu_non_movable";
     public static final String BLOCKS_MINED = "blocks_mined";
+    public static final String MOBS_KILLED = "mobs_killed";
+    public static final String PLAYERS_KILLED = "players_killed";
+    public static final String DAMAGE_DEALT = "damage_dealt";
+    public static final String FISH_CAUGHT = "fish_caught";
+    public static final String TOOL_CATEGORY = "tool_category";
     public static final String SPECIAL_UNLOCKED = "special_unlocked";
     public static final String UNLOCKED_ABILITIES = "unlocked_abilities";
     public static final String MANAGED_LORE_LINES = "managed_lore_lines";
@@ -28,19 +33,19 @@ public final class MetKeys {
     private MetKeys() {
     }
 
-    public static NamespacedKey key(MaxTools plugin, String key) {
+    public static NamespacedKey key(MaxEvo plugin, String key) {
         return new NamespacedKey(plugin, key);
     }
 
-    public static NamespacedKey abilityActivationKey(MaxTools plugin, String abilityId) {
+    public static NamespacedKey abilityActivationKey(MaxEvo plugin, String abilityId) {
         return key(plugin, "ability_activations_" + normalizeAbilityId(abilityId));
     }
 
-    public static NamespacedKey abilityCooldownKey(MaxTools plugin, String abilityId) {
+    public static NamespacedKey abilityCooldownKey(MaxEvo plugin, String abilityId) {
         return key(plugin, "ability_cooldown_" + normalizeAbilityId(abilityId));
     }
 
-    public static NamespacedKey abilityDistanceKey(MaxTools plugin, String abilityId) {
+    public static NamespacedKey abilityDistanceKey(MaxEvo plugin, String abilityId) {
         return key(plugin, "ability_distance_" + normalizeAbilityId(abilityId));
     }
 

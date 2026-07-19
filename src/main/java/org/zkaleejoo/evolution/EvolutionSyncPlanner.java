@@ -21,11 +21,11 @@ public final class EvolutionSyncPlanner {
         int lastReachedMilestone = 0;
 
         for (EvolutionMilestone milestone : milestones == null ? List.<EvolutionMilestone>of() : milestones) {
-            if (milestone == null || safeUsage < milestone.blocksRequired()) {
+            if (milestone == null || safeUsage < milestone.requiredCount()) {
                 continue;
             }
 
-            lastReachedMilestone = Math.max(lastReachedMilestone, milestone.blocksRequired());
+            lastReachedMilestone = Math.max(lastReachedMilestone, milestone.requiredCount());
             boolean hasMissingAbility = false;
             for (String abilityId : milestone.unlockAbilities()) {
                 String normalized = normalizeAbility(abilityId);

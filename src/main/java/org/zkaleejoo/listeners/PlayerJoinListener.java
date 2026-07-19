@@ -4,23 +4,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.config.MainConfigManager;
 import org.zkaleejoo.utils.MessageUtils;
 import org.zkaleejoo.utils.UpdateNotificationFormatter;
 
 public class PlayerJoinListener implements Listener {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public PlayerJoinListener(MaxTools plugin) {
+    public PlayerJoinListener(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (!player.hasPermission("maxtools.admin")) {
+        if (!player.hasPermission("maxevo.admin")) {
             return;
         }
 
@@ -32,7 +32,7 @@ public class PlayerJoinListener implements Listener {
                 config.getMsgUpdateDownload(),
                 plugin.getPluginMeta().getVersion(),
                 plugin.getLatestVersion(),
-                MaxTools.UPDATE_DOWNLOAD_URL)) {
+                MaxEvo.UPDATE_DOWNLOAD_URL)) {
             player.sendMessage(MessageUtils.getColoredMessage(line));
         }
     }

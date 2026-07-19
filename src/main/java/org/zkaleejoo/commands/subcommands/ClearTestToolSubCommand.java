@@ -11,16 +11,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.utils.MessageUtils;
 import org.zkaleejoo.utils.MetKeys;
 import org.zkaleejoo.utils.TestToolRegistry;
 
 public class ClearTestToolSubCommand implements SubCommand {
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
 
-    public ClearTestToolSubCommand(MaxTools plugin) {
+    public ClearTestToolSubCommand(MaxEvo plugin) {
         this.plugin = plugin;
     }
 
@@ -36,7 +36,7 @@ public class ClearTestToolSubCommand implements SubCommand {
 
     @Override
     public String getPermission() {
-        return "maxtools.admin.cleartesttool";
+        return "maxevo.admin.cleartesttool";
     }
 
     @Override

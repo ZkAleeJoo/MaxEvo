@@ -3,5 +3,8 @@ package org.zkaleejoo.evolution;
 public enum AbilityTrigger {
     BLOCK_BREAK,
     WALK_DISTANCE,
-    TICK
+    TICK,
+    ENTITY_KILL,
+    PLAYER_KILL,
+    FISH_CAUGHT
 }

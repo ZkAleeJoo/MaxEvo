@@ -22,7 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.zkaleejoo.MaxTools;
+import org.zkaleejoo.MaxEvo;
 import org.zkaleejoo.config.MainConfigManager;
 
 public class DiscordWebhookNotifier {
@@ -34,13 +34,13 @@ public class DiscordWebhookNotifier {
     private static final String EVENT_TEST_MESSAGE = "test-message";
     private static final String DEFAULT_TEMPLATE = "**{player}** - {tool} - {blocks} blocks - {ability} - {timestamp}";
 
-    private final MaxTools plugin;
+    private final MaxEvo plugin;
     private final HttpClient httpClient;
     private final ExecutorService executor;
     private final AtomicInteger droppedTasks = new AtomicInteger(0);
     private volatile boolean disabledByInvalidWebhook = false;
 
-    public DiscordWebhookNotifier(MaxTools plugin, int maxPendingTasks) {
+    public DiscordWebhookNotifier(MaxEvo plugin, int maxPendingTasks) {
         this.plugin = plugin;
         this.httpClient = HttpClient.newHttpClient();
         this.executor = new ThreadPoolExecutor(
