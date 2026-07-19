@@ -1,0 +1,39 @@
+# ---------------------------------------------------------
+# Pickaxe Evolution Configuration
+# ---------------------------------------------------------
+# Mission types:
+#   MINE_BLOCK → block: <Material>, amount: <int>
+
+item-type: "PICKAXE"
+
+evolutions:
+  1:
+    requirements:
+      missions:
+        mine_stone:
+          type: MINE_BLOCK
+          block: STONE
+          amount: 50
+        mine_iron:
+          type: MINE_BLOCK
+          block: IRON_ORE
+          amount: 10
+    rewards:
+      enchantments:
+        efficiency: 1
+      commands:
+        - "msg %player% &#1621F5&lMaxEvo &8» &bYour pickaxe has evolved to Level 1!"
+
+  2:
+    requirements:
+      missions:
+        mine_diamonds:
+          type: MINE_BLOCK
+          block: DIAMOND_ORE
+          amount: 5
+    rewards:
+      enchantments:
+        efficiency: 2
+        fortune: 1
+      commands:
+        - "msg %player% &#1621F5&lMaxEvo &8» &3Your pickaxe reached Level 2!"

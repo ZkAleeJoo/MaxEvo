@@ -1,0 +1,44 @@
+# ---------------------------------------------------------
+# Sword Evolution Configuration
+# ---------------------------------------------------------
+# Define the requirements and rewards for each evolution level.
+# Mission types:
+#   KILL_ENTITY  → entity: <EntityType>, amount: <int>
+#   KILL_PLAYER  → amount: <int>
+#   DEAL_DAMAGE  → amount: <int> (total damage in half-hearts)
+
+item-type: "SWORD"
+
+evolutions:
+  1:
+    requirements:
+      missions:
+        kill_zombies:
+          type: KILL_ENTITY
+          entity: ZOMBIE
+          amount: 5
+        kill_players:
+          type: KILL_PLAYER
+          amount: 2
+    rewards:
+      enchantments:
+        sharpness: 1
+      commands:
+        - "msg %player% &#1621F5&lMaxEvo &8» &aYour sword has evolved to Level 1!"
+
+  2:
+    requirements:
+      missions:
+        kill_cows:
+          type: KILL_ENTITY
+          entity: COW
+          amount: 10
+        deal_damage:
+          type: DEAL_DAMAGE
+          amount: 500
+    rewards:
+      enchantments:
+        sharpness: 2
+        fire_aspect: 1
+      commands:
+        - "msg %player% &#1621F5&lMaxEvo &8» &eYour sword is now Level 2!"

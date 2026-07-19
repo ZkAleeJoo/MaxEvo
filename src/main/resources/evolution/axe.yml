@@ -1,0 +1,45 @@
+# ---------------------------------------------------------
+# Axe Evolution Configuration
+# ---------------------------------------------------------
+# Mission types:
+#   MINE_BLOCK   → block: <Material>, amount: <int>
+#   KILL_ENTITY  → entity: <EntityType>, amount: <int>
+
+item-type: "AXE"
+
+evolutions:
+  1:
+    requirements:
+      missions:
+        chop_logs:
+          type: MINE_BLOCK
+          block: OAK_LOG
+          amount: 64
+        kill_pigs:
+          type: KILL_ENTITY
+          entity: PIG
+          amount: 5
+    rewards:
+      enchantments:
+        efficiency: 1
+        sharpness: 1
+      commands:
+        - "msg %player% &#1621F5&lMaxEvo &8» &6Your axe has evolved to Level 1!"
+
+  2:
+    requirements:
+      missions:
+        chop_more_logs:
+          type: MINE_BLOCK
+          block: OAK_LOG
+          amount: 256
+        kill_zombies:
+          type: KILL_ENTITY
+          entity: ZOMBIE
+          amount: 20
+    rewards:
+      enchantments:
+        efficiency: 2
+        sharpness: 2
+      commands:
+        - "msg %player% &#1621F5&lMaxEvo &8» &eYour axe reached Level 2!"

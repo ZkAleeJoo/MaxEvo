@@ -9,6 +9,8 @@ import org.bstats.bukkit.Metrics;
 import org.zkaleejoo.commands.MainCommand;
 import org.zkaleejoo.config.CustomConfig;
 import org.zkaleejoo.config.MainConfigManager;
+import org.zkaleejoo.evolution.EvolutionManager;
+import org.zkaleejoo.evolution.EvolutionListener;
 import org.zkaleejoo.listeners.PlayerJoinListener;
 import org.zkaleejoo.utils.MessageUtils;
 import org.zkaleejoo.utils.UpdateChecker;
@@ -19,6 +21,7 @@ public final class MaxEvo extends JavaPlugin {
     private static final long UPDATE_CHECK_INTERVAL_TICKS = 20L * 60L * 60L * 5L;
 
     private MainConfigManager mainConfigManager;
+    private EvolutionManager evolutionManager;
     private String latestVersion;
     private Metrics metrics;
     private ScheduledTask updateCheckTask;
@@ -39,6 +42,9 @@ public final class MaxEvo extends JavaPlugin {
         registerCommand("maxevo", mainCommand, mainCommand);
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+
+        evolutionManager = new EvolutionManager(this);
+        getServer().getPluginManager().registerEvents(new EvolutionListener(evolutionManager), this);
 
         Bukkit.getConsoleSender().sendMessage(
                 MessageUtils.getColoredMessage("&1&lMaxEvo &8» &1   _____                 ___________            "));
